@@ -1,25 +1,25 @@
 import type { AWS } from '@serverless/typescript';
 
-import hello from '@functions/hello';
+import priceWatcher from '@functions/price-watcher';
 
 const serverlessConfiguration: AWS = {
   service: 'price-watcher-istore-lt',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild'],
+  plugins: ['serverless-esbuild', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs14.x',
-    apiGateway: {
-      minimumCompressionSize: 1024,
-      shouldStartNameWithService: true,
-    },
+    runtime: 'nodejs16.x',
+    stage: 'production',
+    region: 'us-east-1',
+    memorySize: 128,
+    timeout: 5,
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
     },
   },
   // import the function via paths
-  functions: { hello },
+  functions: { priceWatcher },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -27,7 +27,7 @@ const serverlessConfiguration: AWS = {
       minify: false,
       sourcemap: true,
       exclude: ['aws-sdk'],
-      target: 'node14',
+      target: 'node16',
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
