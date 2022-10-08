@@ -36,7 +36,6 @@ export const getPrices = async (pathToPage: string): Promise<Product[]> => {
       );
       const specialPrice = !!specialPriceElement.length;
 
-
       return [
         ...products,
         {
