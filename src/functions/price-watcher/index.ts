@@ -4,7 +4,7 @@ export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {
-      schedule: 'cron(30 6 * * MON-SAT *)',
+      schedule: 'cron(30 6 ? * MON-SAT *)',
     },
   ],
 };
