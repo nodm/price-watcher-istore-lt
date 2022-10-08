@@ -36,6 +36,12 @@ export const getPrices = async (pathToPage: string): Promise<Product[]> => {
       );
       const specialPrice = !!specialPriceElement.length;
 
+      console.log(JSON.stringify({
+        name,
+        price,
+        specialPrice,
+        url,
+      }, null, 2));
 
       return [
         ...products,
