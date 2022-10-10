@@ -24,7 +24,10 @@ jobs:
       - name: Create .env file
         run: |
           touch .env
-          echo TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}\nTELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}\nPAGE_PATHES=${{ secrets.PAGE_PATHES }} >> .env
+          echo TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} >> .env
+          echo TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }} >> .env
+          echo PAGE_PATHS=${{ secrets.PAGE_PATHS }} >> .env
+          cat .env
       - name: Deploy Serverless
         uses: serverless/github-action@v3.1
         with:

@@ -3,7 +3,7 @@ import { getPrices } from '../../services/prices';
 import { createMessage, sendMessage } from '../../services/telegram';
 
 const priceWatcher: ScheduledHandler = async (): Promise<void> => {
-  const paths = process.env.PAGE_PATHES?.split(',');
+  const paths = process.env.PAGE_PATHS?.split(',');
   if (!paths || !paths.length) return;
 
   const results = await Promise.allSettled(paths.map(url => getPrices(url)
