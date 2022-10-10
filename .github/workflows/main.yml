@@ -13,13 +13,19 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Configure Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - name: serverless deploy
+      - name: Install dependencies
+        run: npm ci
+      - name: Create .env file
+        run: |
+          touch .env
+          echo TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}\nTELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}\nPAGE_PATHES=${{ secrets.PAGE_PATHES }} >> .env
+      - name: Deploy Serverless
         uses: serverless/github-action@v3.1
         with:
           args: deploy
