@@ -12,7 +12,7 @@ const serverlessConfiguration: AWS = {
     stage: 'production',
     region: 'us-east-1',
     memorySize: 128,
-    timeout: 10,
+    timeout: 15,
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
