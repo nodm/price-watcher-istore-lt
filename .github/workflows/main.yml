@@ -19,10 +19,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-#      - name: Install Serverless Framework
-#        run: npm install -g serverless
-#      - name: Serverless AWS authentication
-#        run: sls config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Install Serverless Framework
+        run: npm install -g serverless
+      - name: Serverless AWS authentication
+        run: sls config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Install dependencies
         run: npm ci
       - name: Create .env file
@@ -32,11 +32,11 @@ jobs:
           echo TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }} >> .env
           echo PAGE_PATHS=${{ secrets.PAGE_PATHS }} >> .env
       - name: Deploy Serverless
-#        run: sls deploy -s production
-        uses: serverless/github-action@v3.1
-        with:
-          args: deploy -s production
-        env:
-           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           SLS_DEBUG: 1
+        run: sls deploy -s production
+#        uses: serverless/github-action@v3.1
+#        with:
+#          args: deploy -s production
+#        env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           SLS_DEBUG: 1
