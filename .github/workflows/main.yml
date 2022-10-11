@@ -22,8 +22,11 @@ jobs:
       - name: Display variables
         run: |
           echo PAGE_PATHS="${{ secrets.PAGE_PATHS }}" | sed 's/./& /g'
+          echo TEST="${{ secrets.TEST }}" | sed 's/./& /g'
+          echo $TEST_TEST | sed 's/./& /g'
         env:
           PAGE_PATHS: ${{ secrets.PAGE_PATHS }}
+          TEST_TEST: ${{ secrets.TEST }}
       - name: Install dependencies
         run: npm ci
       - name: Create .env file
