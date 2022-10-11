@@ -19,16 +19,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install Serverless Framework
-        run: npm install -g serverless
-      - name: Serverless AWS authentication
+      - name: Display variables
         run: |
-          run: echo ${{ secrets.TELEGRAM_BOT_TOKEN }} | sed 's/./& /g'
-          run: echo ${{ secrets.TELEGRAM_CHAT_ID }} | sed 's/./& /g'
-          run: echo ${{ secrets.PAGE_PATHS }} | sed 's/./& /g'
-          run: echo ${{ secrets.AWS_ACCESS_KEY_ID }} | sed 's/./& /g'
-          run: echo ${{ secrets.AWS_SECRET_ACCESS_KEY }} | sed 's/./& /g'
-          sls config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          echo T: ${{ secrets.TELEGRAM_BOT_TOKEN }} | sed 's/./& /g'
+          echo ${{ secrets.TELEGRAM_CHAT_ID }} | sed 's/./& /g'
+          echo ${{ secrets.PAGE_PATHS }} | sed 's/./& /g'
+          echo ${{ secrets.AWS_ACCESS_KEY_ID }} | sed 's/./& /g'
+          echo ${{ secrets.AWS_SECRET_ACCESS_KEY }} | sed 's/./& /g'
       - name: Install dependencies
         run: npm ci
       - name: Create .env file
@@ -38,17 +35,10 @@ jobs:
           echo TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }} >> .env
           echo PAGE_PATHS=${{ secrets.PAGE_PATHS }} >> .env
       - name: Deploy Serverless
-        run: |
-          run: echo ${{ secrets.TELEGRAM_BOT_TOKEN }} | sed 's/./& /g'
-          run: echo ${{ secrets.TELEGRAM_CHAT_ID }} | sed 's/./& /g'
-          run: echo ${{ secrets.PAGE_PATHS }} | sed 's/./& /g'
-          run: echo ${{ secrets.AWS_ACCESS_KEY_ID }} | sed 's/./& /g'
-          run: echo ${{ secrets.AWS_SECRET_ACCESS_KEY }} | sed 's/./& /g'
-          sls deploy -s production
-#        uses: serverless/github-action@v3.1
-#        with:
-#          args: deploy -s production
-#        env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           SLS_DEBUG: 1
+        uses: serverless/github-action@v3.1
+        with:
+          args: deploy -s production
+        env:
+           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           SLS_DEBUG: 1
