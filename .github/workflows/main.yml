@@ -1,4 +1,4 @@
-name: Deploy main branch
+name: Deploy Serverless from main branch
 
 on:
   push:
@@ -20,18 +20,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Display variables
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          PAGE_PATHS: ${{ secrets.PAGE_PATHS }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          echo T: ${{ secrets.TELEGRAM_BOT_TOKEN }} | sed 's/./& /g'
-          echo ${{ secrets.TELEGRAM_CHAT_ID }} | sed 's/./& /g'
-          echo ${{ secrets.PAGE_PATHS }} | sed 's/./& /g'
-          echo ${{ secrets.AWS_ACCESS_KEY_ID }} | sed 's/./& /g'
-          echo ${{ secrets.AWS_SECRET_ACCESS_KEY }} | sed 's/./& /g'
+          echo PAGE_PATHS="${{ secrets.PAGE_PATHS }}" | sed 's/./& /g'
+        env:
+          PAGE_PATHS: ${{ secrets.PAGE_PATHS }}
       - name: Install dependencies
         run: npm ci
       - name: Create .env file
