@@ -10,6 +10,8 @@
     "node": ">=16"
   },
   "dependencies": {
+    "@middy/core": "^3.6.0",
+    "@middy/http-json-body-parser": "^3.6.0",
     "cheerio": "^1.0.0-rc.12"
   },
   "devDependencies": {
