@@ -1,5 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
+import botWebhook from '@functions/bot-webhook';
 import priceWatcher from '@functions/price-watcher';
 
 const serverlessConfiguration: AWS = {
@@ -18,8 +19,7 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
     },
   },
-  // import the function via paths
-  functions: { priceWatcher },
+  functions: { botWebhook, priceWatcher },
   package: { individually: true },
   custom: {
     esbuild: {
