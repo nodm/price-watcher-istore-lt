@@ -1,13 +1,7 @@
 import * as path from 'node:path';
 import { load } from 'cheerio';
+import type { Product } from '../models/product';
 import { fetchPage } from './fetch';
-
-export type Product = {
-  name: string;
-  price: number;
-  specialPrice: boolean;
-  url: string;
-}
 
 const HOST_NAME = 'https://istore.lt';
 
@@ -28,7 +22,7 @@ export const getPrices = async (pathToPage: string): Promise<Product[]> => {
 
       const priceBoxElement = productElement.find('div.price-box');
       const specialPriceElement = priceBoxElement.find('.special-price');
-      const price = parseFloat(
+      const currentPrice = parseFloat(
         ((specialPriceElement.length && specialPriceElement) || priceBoxElement)
           .find('span.price')
           .text()
@@ -39,10 +33,10 @@ export const getPrices = async (pathToPage: string): Promise<Product[]> => {
       return [
         ...products,
         {
-          name,
-          price,
-          specialPrice,
           url,
+          name,
+          currentPrice,
+          specialPrice,
         },
       ];
     }, []);
