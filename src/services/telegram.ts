@@ -1,5 +1,5 @@
 import * as https from 'node:https';
-import type { Product } from './prices';
+import type { Product } from '../models/product';
 
 export const sendMessage = (text: string) => new Promise<string | never>((resolve, reject) => {
   const request = https.request({
@@ -45,8 +45,8 @@ const sanitizeText = (text: string): string => text
 
 
 export const createMessage = (products: Product[]): string =>  products
-  .map(({ name, price, specialPrice, url }) => {
-    const prettyPrice = Math.round(price)
+  .map(({ name, currentPrice, specialPrice, url }) => {
+    const prettyPrice = Math.round(currentPrice)
       .toString()
       .match(/(\d+?)(?=(\d{3})+(?!\d)|$)/g).join(' ');
 
