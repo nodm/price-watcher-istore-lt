@@ -3,6 +3,7 @@ import type { AWS } from '@serverless/typescript';
 import botWebhook from '@functions/bot-webhook';
 import priceWatcher from '@functions/price-watcher';
 import telegramMessageProcessor from '@functions/telegram-message-processor';
+import telegramMessageSender from '@functions/telegram-message-sender';
 
 // const ONE_HOUR = 60 * 60;
 
@@ -24,8 +25,10 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-      TELEGRAM_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-message-queue',
-      // TELEGRAM_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-message-dead-letter-queue',
+      TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-incoming-message-queue',
+      // TELEGRAM_INCOMING_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-incoming-message-dead-letter-queue',
+      TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-outgoing-message-queue',
+      // TELEGRAM_OUTGOING_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-outgoing-message-dead-letter-queue',
     },
     iam: {
       role: {
@@ -34,7 +37,14 @@ const serverlessConfiguration: AWS = {
             Effect: 'Allow',
             Action: ['sqs:SendMessage'],
             Resource: {
-              'Fn::GetAtt': ['TelegramMessageQueue', 'Arn'],
+              'Fn::GetAtt': ['TelegramIncomingMessageQueue', 'Arn'],
+            },
+          },
+          {
+            Effect: 'Allow',
+            Action: ['sqs:SendMessage'],
+            Resource: {
+              'Fn::GetAtt': ['TelegramOutgoingMessageQueue', 'Arn'],
             },
           },
         ],
@@ -45,13 +55,14 @@ const serverlessConfiguration: AWS = {
     botWebhook,
     priceWatcher,
     telegramMessageProcessor,
+    telegramMessageSender,
   },
   resources: {
     Resources: {
-      TelegramMessageQueue: {
+      TelegramIncomingMessageQueue: {
         Type: 'AWS::SQS::Queue',
         Properties: {
-          QueueName: '${self:provider.environment.TELEGRAM_MESSAGE_QUEUE_NAME}',
+          QueueName: '${self:provider.environment.TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME}',
           // FifoQueue: false,
           // VisibilityTimeout: 60,
           // RedrivePolicy: {
@@ -62,10 +73,31 @@ const serverlessConfiguration: AWS = {
           // },
         },
       },
-      // TelegramMessageDeadLetterQueue: {
+      // TelegramIncomingMessageDeadLetterQueue: {
       //   Type: 'AWS::SQS::Queue',
       //   Properties: {
-      //     QueueName: '${self:provider.environment.TELEGRAM_MESSAGE_DEAD_LETTER_QUEUE_NAME}',
+      //     QueueName: '${self:provider.environment.TELEGRAM_INCOMING_MESSAGE_DEAD_LETTER_QUEUE_NAME}',
+      //     MessageRetentionPeriod: ONE_HOUR,
+      //   },
+      // },
+      TelegramOutgoingMessageQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: '${self:provider.environment.TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME}',
+          // FifoQueue: false,
+          // VisibilityTimeout: 60,
+          // RedrivePolicy: {
+          //   deadLetterTargetArn: {
+          //     'Fn::GetAtt': ['TelegramMessageDeadLetterQueue', 'Arn'],
+          //   },
+          //   maxReceiveCount: 5,
+          // },
+        },
+      },
+      // TelegramOutgoingMessageDeadLetterQueue: {
+      //   Type: 'AWS::SQS::Queue',
+      //   Properties: {
+      //     QueueName: '${self:provider.environment.TELEGRAM_OUTGOING_MESSAGE_DEAD_LETTER_QUEUE_NAME}',
       //     MessageRetentionPeriod: ONE_HOUR,
       //   },
       // },

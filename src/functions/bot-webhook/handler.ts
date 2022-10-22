@@ -11,7 +11,7 @@ const botWebhook = async (event: APIGatewayProxyEvent, context: Context): Promis
 
   const message = (typeof event.body === 'string' ? JSON.parse(event.body) : event.body)?.message as Message;
   const [, , , region, accountId] = context.invokedFunctionArn.split(':');
-  const { TELEGRAM_MESSAGE_QUEUE_NAME: queueName } = process.env;
+  const { TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME: queueName } = process.env;
   const queueUrl: string = `https://sqs.${region}.amazonaws.com/${accountId}/${queueName}`
 
   console.log('botWebhook :: SNS URL', queueUrl);
