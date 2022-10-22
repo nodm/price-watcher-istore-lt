@@ -49,7 +49,7 @@ const serverlessConfiguration: AWS = {
   resources: {
     Resources: {
       TelegramMessageQueue: {
-        Type: 'AWS::SQS:Queue',
+        Type: 'AWS::SQS::Queue',
         Properties: {
           QueueName: '${self:provider.environment.TELEGRAM_MESSAGE_QUEUE_NAME}',
           FifoQueue: false,
@@ -63,7 +63,7 @@ const serverlessConfiguration: AWS = {
         },
       },
       // TelegramMessageDeadLetterQueue: {
-      //   Type: 'AWS::SQS:Queue',
+      //   Type: 'AWS::SQS::Queue',
       //   Properties: {
       //     QueueName: '${self:provider.environment.TELEGRAM_MESSAGE_DEAD_LETTER_QUEUE_NAME}',
       //     MessageRetentionPeriod: ONE_HOUR,
