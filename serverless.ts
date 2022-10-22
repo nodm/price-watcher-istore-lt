@@ -52,7 +52,7 @@ const serverlessConfiguration: AWS = {
         Type: 'AWS::SQS::Queue',
         Properties: {
           QueueName: '${self:provider.environment.TELEGRAM_MESSAGE_QUEUE_NAME}',
-          FifoQueue: false,
+          // FifoQueue: false,
           // VisibilityTimeout: 60,
           // RedrivePolicy: {
           //   deadLetterTargetArn: {
