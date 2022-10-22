@@ -1,7 +1,10 @@
 import * as https from 'node:https';
 import type { Product } from '../models/product';
 
-export const sendMessage = (text: string) => new Promise<string | never>((resolve, reject) => {
+export const sendMessage = (
+  text: string,
+  chatId = parseInt(process.env.TELEGRAM_CHAT_ID),
+) => new Promise<string | never>((resolve, reject) => {
   const request = https.request({
     method: 'POST',
     hostname: 'api.telegram.org',
@@ -29,7 +32,7 @@ export const sendMessage = (text: string) => new Promise<string | never>((resolv
   });
 
   request.write(JSON.stringify({
-    chat_id: process.env.TELEGRAM_CHAT_ID,
+    chat_id: chatId,
     text,
     parse_mode: 'MarkdownV2',
   }));

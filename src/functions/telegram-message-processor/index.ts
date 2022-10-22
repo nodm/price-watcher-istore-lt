@@ -2,11 +2,13 @@ import { handlerPath } from '@libs/handler-resolver';
 
 export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
-  memorySize: 512,
-  timeout: 15,
+  memorySize: 128,
+  timeout: 5,
   events: [
     {
-      schedule: 'cron(30 6 ? * MON-SAT *)',
+      sqs: {
+        arn: { 'Fn::GetAtt': ['TelegramMessageQueue', 'Arn'] },
+      },
     },
   ],
 };
