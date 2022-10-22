@@ -6,7 +6,7 @@ const sqs = new SQS();
 
 const telegramMessageProcessor: SQSHandler = async (event: SQSEvent, context: Context) => {
   console.log('telegramMessageProcessor :: Message received', event);
-  console.log('telegramMessageProcessor :: Context.invokedFunctionArn', context.invokedFunctionArn.split);
+  console.log('telegramMessageProcessor :: Context.invokedFunctionArn', context.invokedFunctionArn);
 
   const [, , , region, accountId] = context.invokedFunctionArn.split(':');
   const { TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME: queueName } = process.env;
