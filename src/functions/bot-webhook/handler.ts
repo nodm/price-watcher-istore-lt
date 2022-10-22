@@ -7,9 +7,9 @@ import { middyfy } from '@libs/lambda';
 const sqs = new SQS();
 
 const botWebhook = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
-  console.log('botWebhook :: Message received', event.body);
+  console.log('botWebhook :: Message received', event.body, typeof event.body);
 
-  const message = JSON.parse(event.body)?.message as Message;
+  const message = (typeof event.body === 'string' ? JSON.parse(event.body) : event.body)?.message as Message;
   const [, , , region, accountId] = context.invokedFunctionArn.split(':');
   const { TELEGRAM_MESSAGE_QUEUE_NAME: queueName } = process.env;
   const queueUrl: string = `https://sqs.${region}.amazonaws.com/${accountId}/${queueName}`
