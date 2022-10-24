@@ -25,10 +25,10 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-      TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-incoming-message-queue',
-      // TELEGRAM_INCOMING_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-incoming-message-dead-letter-queue',
-      TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-outgoing-message-queue',
-      // TELEGRAM_OUTGOING_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-outgoing-message-dead-letter-queue',
+      INCOMING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-incoming-message-queue',
+      // INCOMING_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-incoming-message-dead-letter-queue',
+      OUTGOING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-outgoing-message-queue',
+      // OUTGOING_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-outgoing-message-dead-letter-queue',
     },
     iam: {
       role: {
@@ -37,14 +37,14 @@ const serverlessConfiguration: AWS = {
             Effect: 'Allow',
             Action: ['sqs:SendMessage'],
             Resource: {
-              'Fn::GetAtt': ['TelegramIncomingMessageQueue', 'Arn'],
+              'Fn::GetAtt': ['IncomingMessageQueue', 'Arn'],
             },
           },
           {
             Effect: 'Allow',
             Action: ['sqs:SendMessage'],
             Resource: {
-              'Fn::GetAtt': ['TelegramOutgoingMessageQueue', 'Arn'],
+              'Fn::GetAtt': ['OutgoingMessageQueue', 'Arn'],
             },
           },
         ],
@@ -59,45 +59,45 @@ const serverlessConfiguration: AWS = {
   },
   resources: {
     Resources: {
-      TelegramIncomingMessageQueue: {
+      IncomingMessageQueue: {
         Type: 'AWS::SQS::Queue',
         Properties: {
-          QueueName: '${self:provider.environment.TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME}',
+          QueueName: '${self:provider.environment.INCOMING_MESSAGE_QUEUE_NAME}',
           // FifoQueue: false,
           // VisibilityTimeout: 60,
           // RedrivePolicy: {
           //   deadLetterTargetArn: {
-          //     'Fn::GetAtt': ['TelegramMessageDeadLetterQueue', 'Arn'],
+          //     'Fn::GetAtt': ['MessageDeadLetterQueue', 'Arn'],
           //   },
           //   maxReceiveCount: 5,
           // },
         },
       },
-      // TelegramIncomingMessageDeadLetterQueue: {
+      // IncomingMessageDeadLetterQueue: {
       //   Type: 'AWS::SQS::Queue',
       //   Properties: {
-      //     QueueName: '${self:provider.environment.TELEGRAM_INCOMING_MESSAGE_DEAD_LETTER_QUEUE_NAME}',
+      //     QueueName: '${self:provider.environment.INCOMING_MESSAGE_DEAD_LETTER_QUEUE_NAME}',
       //     MessageRetentionPeriod: ONE_HOUR,
       //   },
       // },
-      TelegramOutgoingMessageQueue: {
+      OutgoingMessageQueue: {
         Type: 'AWS::SQS::Queue',
         Properties: {
-          QueueName: '${self:provider.environment.TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME}',
+          QueueName: '${self:provider.environment.OUTGOING_MESSAGE_QUEUE_NAME}',
           // FifoQueue: false,
           // VisibilityTimeout: 60,
           // RedrivePolicy: {
           //   deadLetterTargetArn: {
-          //     'Fn::GetAtt': ['TelegramMessageDeadLetterQueue', 'Arn'],
+          //     'Fn::GetAtt': ['OutgoingMessageDeadLetterQueue', 'Arn'],
           //   },
           //   maxReceiveCount: 5,
           // },
         },
       },
-      // TelegramOutgoingMessageDeadLetterQueue: {
+      // OutgoingMessageDeadLetterQueue: {
       //   Type: 'AWS::SQS::Queue',
       //   Properties: {
-      //     QueueName: '${self:provider.environment.TELEGRAM_OUTGOING_MESSAGE_DEAD_LETTER_QUEUE_NAME}',
+      //     QueueName: '${self:provider.environment.OUTGOING_MESSAGE_DEAD_LETTER_QUEUE_NAME}',
       //     MessageRetentionPeriod: ONE_HOUR,
       //   },
       // },
