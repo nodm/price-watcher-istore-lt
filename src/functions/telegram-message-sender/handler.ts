@@ -1,5 +1,5 @@
 import { SQSEvent, SQSHandler, SQSRecord } from 'aws-lambda';
-import { sendMessage } from '../../services/telegram';
+import { sendMessage } from '@services/telegram';
 
 const telegramMessageSender: SQSHandler = async (event: SQSEvent) => {
   console.log('telegramMessageProcessor :: Event received', event);
@@ -11,23 +11,14 @@ const telegramMessageSender: SQSHandler = async (event: SQSEvent) => {
       return Promise.reject(new Error('Incorrect chat ID.'));
     }
 
-    return sendMessage(text, chatId);
+    return sendMessage(chatId, text);
   }));
 
   for(const result of sentResults) {
-    if (result.status === 'fulfilled') {
-      console.log(
-        'telegramMessageProcessor',
-        'status:', result.status,
-        'value:', result.value,
-      );
-      return;
-    }
-
     console.log(
       'telegramMessageProcessor',
-      'status:',result. status,
-      'reason:', result.reason,
+      'status:', result.status,
+      'value:', result.status === 'fulfilled' ? result.value : result.reason,
     );
   }
 };

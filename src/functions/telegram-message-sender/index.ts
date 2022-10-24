@@ -7,7 +7,7 @@ export default {
   events: [
     {
       sqs: {
-        arn: { 'Fn::GetAtt': ['TelegramOutgoingMessageQueue', 'Arn'] },
+        arn: { 'Fn::GetAtt': ['OutgoingMessageQueue', 'Arn'] },
       },
     },
   ],
