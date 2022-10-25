@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda
 import { Message } from '@grammyjs/types';
 import { formatJSONResponse } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
-import { sendSQSMessage } from '@services/sqsService';
+import SQSService from '@services/SQSService';
 
 const botWebhook = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
   console.log('botWebhook :: Message received', event.body);
@@ -11,7 +11,7 @@ const botWebhook = async (event: APIGatewayProxyEvent, context: Context): Promis
   const { INCOMING_MESSAGE_QUEUE_NAME: queueName } = process.env;
 
   try {
-    await sendSQSMessage(context)(queueName, message);
+    await SQSService.send(context)(queueName, message);
   } catch (error) {
     console.error('botWebhook :: Error', error);
     return formatJSONResponse({ message: 'Internal function error.' }, 500);
