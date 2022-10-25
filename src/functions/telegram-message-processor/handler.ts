@@ -1,6 +1,6 @@
 import { Context, SQSEvent, SQSHandler, SQSRecord } from 'aws-lambda';
 import { Message } from '@grammyjs/types';
-import { sendSQSMessage } from '@services/sqsService';
+import SQSService from '@services/SQSService';
 
 const telegramMessageProcessor: SQSHandler = async (event: SQSEvent, context: Context) => {
   console.log('telegramMessageProcessor :: Message received', event);
@@ -11,7 +11,7 @@ const telegramMessageProcessor: SQSHandler = async (event: SQSEvent, context: Co
     const message = JSON.parse(record.body) as Message;
     const { chat: { id: chatId }, text } = message;
 
-    return sendSQSMessage(context)(queueName, {
+    return SQSService.send(context)(queueName, {
       chatId,
       text: `_${text}_ Hello *${message?.from?.first_name}*`
     });
