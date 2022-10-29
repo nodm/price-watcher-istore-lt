@@ -61,7 +61,7 @@ const serverlessConfiguration: AWS = {
               // 'dynamodb:DeleteItem',
             ],
             Resource: {
-              'Fn:GetAtt': ['productsTable', 'Arn']
+              'Fn::GetAtt': ['productsTable', 'Arn']
             },
           },
         ],
