@@ -5,7 +5,7 @@ export interface Product {
   specialPrice: boolean;
 }
 
-export interface ProductRecord extends Product {
+export interface ProductItem extends Product {
   previousPrice: number;
-  timestamp: number;
+  timestamp: string;
 }
