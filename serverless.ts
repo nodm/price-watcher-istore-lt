@@ -13,6 +13,7 @@ const serverlessConfiguration: AWS = {
   plugins: [
     'serverless-esbuild',
     'serverless-dotenv-plugin',
+    'serverless-dynamodb-local',
     'serverless-offline',
   ],
   provider: {
@@ -29,6 +30,7 @@ const serverlessConfiguration: AWS = {
       // INCOMING_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-incoming-message-dead-letter-queue',
       OUTGOING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-outgoing-message-queue',
       // OUTGOING_MESSAGE_DEAD_LETTER_QUEUE_NAME: '${self:service}-${self:provider.stage}-outgoing-message-dead-letter-queue',
+      PRODUCT_TABLE_NAME: 'productsTable',
     },
     iam: {
       role: {
@@ -45,6 +47,21 @@ const serverlessConfiguration: AWS = {
             Action: ['sqs:SendMessage'],
             Resource: {
               'Fn::GetAtt': ['OutgoingMessageQueue', 'Arn'],
+            },
+          },
+          {
+            Effect: 'Allow',
+            Action: [
+              'dynamodb:DescribeTable',
+              // 'dynamodb:Query',
+              // 'dynamodb:Scan',
+              'dynamodb:GetItem',
+              'dynamodb:PutItem',
+              'dynamodb:UpdateItem',
+              // 'dynamodb:DeleteItem',
+            ],
+            Resource: {
+              'Fn:GetAtt': ['productsTable', 'Arn']
             },
           },
         ],
@@ -101,6 +118,24 @@ const serverlessConfiguration: AWS = {
       //     MessageRetentionPeriod: ONE_HOUR,
       //   },
       // },
+      productsTable: {
+        Type: 'AWS::DynamoDB::Table',
+        Properties: {
+          TableName: '${self:provider.environment.PRODUCT_TABLE_NAME}',
+          AttributeDefinitions: [{
+            AttributeName: 'url',
+            AttributeType: 'S',
+          }],
+          KeySchema: [{
+            AttributeName: 'url',
+            KeyType: 'HASH',
+          }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1,
+          },
+        },
+      },
     },
   },
   package: { individually: true },
@@ -114,6 +149,18 @@ const serverlessConfiguration: AWS = {
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
+    },
+    dynamodb: {
+      stages: 'dev',
+      start: {
+        port: 8000,
+        inMemory: true,
+        heapInitial: '200m',
+        heapMax: '1g',
+        migrate: true,
+        seed: true,
+        convertEmptyValues: true,
+      },
     },
   },
 };

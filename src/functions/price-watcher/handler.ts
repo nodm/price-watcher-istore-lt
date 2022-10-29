@@ -1,5 +1,6 @@
 import { Context, ScheduledHandler } from 'aws-lambda';
 import PricesService from '@services/PricesService';
+import ProductService from '@services/ProductService';
 import SQSService from '@services/SQSService';
 import { Product } from '@models/product';
 
@@ -12,6 +13,9 @@ const priceWatcher: ScheduledHandler = async (_, context: Context): Promise<void
   const sendMessage = SQSService.send(context);
 
   const results = await Promise.allSettled(paths.map(url => PricesService.getPrices(url)
+      .then((products: Product[]) => Promise
+        .allSettled(products.map(product => ProductService.setPrice(product)))
+        .then(() => products))
     .then(createTelegramMessage)
     .then(text => sendMessage(queueName, { chatId,  text }))
   ));
