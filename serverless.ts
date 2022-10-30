@@ -101,7 +101,7 @@ const serverlessConfiguration: AWS = {
           QueueName: '${self:provider.environment.TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME}',
           RedrivePolicy: {
             deadLetterTargetArn: {
-              'Fn::GetAtt': ['OutgoingMessageDLQ', 'Arn'],
+              'Fn::GetAtt': ['TelegramOutgoingMessageDLQ', 'Arn'],
             },
             maxReceiveCount: 5,
           },
