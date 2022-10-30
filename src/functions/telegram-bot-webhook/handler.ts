@@ -4,7 +4,7 @@ import { formatJSONResponse } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import SQSService from '@services/SQSService';
 
-const botWebhook = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
+const telegramBotWebhook = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
   console.log('botWebhook :: Message received', event.body);
 
   const message = (typeof event.body === 'string' ? JSON.parse(event.body) : event.body)?.message as Message;
@@ -22,4 +22,4 @@ const botWebhook = async (event: APIGatewayProxyEvent, context: Context): Promis
   return formatJSONResponse({ message: 'Message received.' });
 };
 
-export const main = middyfy(botWebhook);
+export const main = middyfy(telegramBotWebhook);
