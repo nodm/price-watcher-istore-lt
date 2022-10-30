@@ -39,14 +39,14 @@ const serverlessConfiguration: AWS = {
             Effect: 'Allow',
             Action: ['sqs:SendMessage'],
             Resource: {
-              'Fn::GetAtt': ['IncomingMessageQueue', 'Arn'],
+              'Fn::GetAtt': ['TelegramIncomingMessageQueue', 'Arn'],
             },
           },
           {
             Effect: 'Allow',
             Action: ['sqs:SendMessage'],
             Resource: {
-              'Fn::GetAtt': ['OutgoingMessageQueue', 'Arn'],
+              'Fn::GetAtt': ['TelegramOutgoingMessageQueue', 'Arn'],
             },
           },
           {
