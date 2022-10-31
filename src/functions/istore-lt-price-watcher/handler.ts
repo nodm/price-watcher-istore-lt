@@ -1,11 +1,11 @@
 import { Context, ScheduledHandler } from 'aws-lambda';
-import PricesService from '@services/PricesService';
+import IStoreLtPricesService from '@services/IStoreLtPricesService';
 import ProductService from '@services/ProductService';
 import SQSService from '@services/SQSService';
 import { Product, ProductItem } from '@models/product';
 import { createTelegramMessage } from './helpers';
 
-const priceWatcher: ScheduledHandler = async (_, context: Context): Promise<void> => {
+const iStoreLtPriceWatcher: ScheduledHandler = async (_, context: Context): Promise<void> => {
   const paths = process.env.PAGE_PATHS?.split(',');
   if (!paths || !paths.length) return;
 
@@ -13,7 +13,7 @@ const priceWatcher: ScheduledHandler = async (_, context: Context): Promise<void
   const { TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME: queueName } = process.env;
   const sendMessage = SQSService.send(context, queueName);
 
-  const results = await Promise.allSettled(paths.map(url => PricesService.getPrices(url)
+  const results = await Promise.allSettled(paths.map(url => IStoreLtPricesService.getPrices(url)
     .then((products: Product[]) => Promise.allSettled(products.map(product => ProductService.setPrice(product))))
     .then(results => results.reduce((products, result) => {
       if (result.status === 'rejected') return products;
@@ -32,4 +32,4 @@ const priceWatcher: ScheduledHandler = async (_, context: Context): Promise<void
     });
 };
 
-export const main = priceWatcher;
+export const main = iStoreLtPriceWatcher;
