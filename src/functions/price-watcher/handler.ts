@@ -9,7 +9,7 @@ const priceWatcher: ScheduledHandler = async (_, context: Context): Promise<void
   if (!paths || !paths.length) return;
 
   const chatId = parseInt(process.env.TELEGRAM_CHAT_ID);
-  const { OUTGOING_MESSAGE_QUEUE_NAME: queueName } = process.env;
+  const { TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME: queueName } = process.env;
   const sendMessage = SQSService.send(context);
 
   const results = await Promise.allSettled(paths.map(url => PricesService.getPrices(url)
