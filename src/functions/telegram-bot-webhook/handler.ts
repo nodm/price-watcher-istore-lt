@@ -8,7 +8,7 @@ const telegramBotWebhook = async (event: APIGatewayProxyEvent, context: Context)
   console.log('botWebhook :: Message received', event.body);
 
   const message = (typeof event.body === 'string' ? JSON.parse(event.body) : event.body)?.message as Message;
-  const { INCOMING_MESSAGE_QUEUE_NAME: queueName } = process.env;
+  const { TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME: queueName } = process.env;
 
   try {
     await SQSService.send(context)(queueName, message);

@@ -5,7 +5,7 @@ import SQSService from '@services/SQSService';
 const telegramMessageProcessor: SQSHandler = async (event: SQSEvent, context: Context) => {
   console.log('telegramMessageProcessor :: Message received', event);
 
-  const { OUTGOING_MESSAGE_QUEUE_NAME: queueName } = process.env;
+  const { TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME: queueName } = process.env;
 
   const results = await Promise.allSettled(event.Records.map((record: SQSRecord) => {
     const message = JSON.parse(record.body) as Message;
