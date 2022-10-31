@@ -11,7 +11,7 @@ const telegramMessageProcessor: SQSHandler = async (event: SQSEvent, context: Co
     const message = JSON.parse(record.body) as Message;
     const { chat: { id: chatId }, text } = message;
 
-    return SQSService.send(context)(queueName, {
+    return SQSService.send(context, queueName)({
       chatId,
       text: `_${text}_ Hello *${message?.from?.first_name}*`
     });

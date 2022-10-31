@@ -5,7 +5,7 @@ const productTable = process.env.PRODUCT_TABLE_NAME;
 const dynamoDBClient = provideDynamoDBClient();
 
 const ProductService = {
-  setPrice: async (product: Product) => {
+  setPrice: async (product: Product): Promise<ProductItem> => {
     try {
       const { Item: storedProduct } = await dynamoDBClient.get({
         TableName: productTable,
@@ -24,6 +24,8 @@ const ProductService = {
         TableName: productTable,
         Item: productItem,
       }).promise();
+
+      return productItem;
     } catch(error) {
       console.log(error);
     }

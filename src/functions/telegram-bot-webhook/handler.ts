@@ -11,7 +11,7 @@ const telegramBotWebhook = async (event: APIGatewayProxyEvent, context: Context)
   const { TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME: queueName } = process.env;
 
   try {
-    await SQSService.send(context)(queueName, message);
+    await SQSService.send(context, queueName)(message);
   } catch (error) {
     console.error('botWebhook :: Error', error);
     return formatJSONResponse({ message: 'Internal function error.' }, 500);

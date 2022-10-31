@@ -4,7 +4,7 @@ const TelegramService = {
   send: (
     chatId: number,
     text: string,
-    parseMode = 'MarkdownV2',
+    parseMode = 'HTML',
   ) => {
     return HttpsService.post(
       {
@@ -21,6 +21,12 @@ const TelegramService = {
       }
     );
   },
+
+  encodeHtml: (text: string): string => text
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;'),
 };
 
 export default TelegramService;
