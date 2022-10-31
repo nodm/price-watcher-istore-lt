@@ -5,7 +5,7 @@ import HttpsService from '@services/HttpsService';
 
 const HOST_NAME = 'https://istore.lt';
 
-const PricesService = {
+const IStoreLtPricesService = {
   getPrices: async (pathToPage: string): Promise<Product[]> => {
     const data = await HttpsService.get(path.join(HOST_NAME, pathToPage));
     const $ = load(data, null, false);
@@ -43,4 +43,4 @@ const PricesService = {
       }, []);
   },
 };
-export default PricesService;
+export default IStoreLtPricesService;

@@ -1,7 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
 import telegramBotWebhook from '@functions/telegram-bot-webhook';
-import priceWatcher from '@functions/price-watcher';
+import iStoreLtPriceWatcher from '@functions/istore-lt-price-watcher';
 import telegramMessageProcessor from '@functions/telegram-message-processor';
 import telegramMessageSender from '@functions/telegram-message-sender';
 
@@ -70,7 +70,7 @@ const serverlessConfiguration: AWS = {
   },
   functions: {
     telegramBotWebhook,
-    priceWatcher,
+    iStoreLtPriceWatcher,
     telegramMessageProcessor,
     telegramMessageSender,
   },
