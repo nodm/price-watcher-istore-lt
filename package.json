@@ -1,7 +1,7 @@
 {
-  "name": "price-watcher-istore-lt",
+  "name": "snitch",
   "version": "1.0.0",
-  "description": "Lambda function for price monitoring on istore.lt",
+  "description": "Monitor what you'd like ;)",
   "main": "serverless.ts",
   "scripts": {
     "start:local": "serverless invoke local --function"
