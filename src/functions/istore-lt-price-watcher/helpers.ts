@@ -9,13 +9,11 @@ export const createTelegramMessage = (products: ProductItem[]): string =>  produ
   .map(({ name, currentPrice, previousPrice, specialPrice, url }) => {
     const priceDelta = Math.round(currentPrice - previousPrice);
     const priceChange = priceDelta
-      ? ` (${priceDelta > 0 ? '⬆️' : '⬇️'} ${splitNumber(Math.abs(priceDelta))})`
+      ? ` (${priceDelta > 0 ? '⬆️' : '⬇️'} <b><i>${splitNumber(Math.abs(priceDelta))})</i></b>`
       : '';
+    const messageTitle =  `<a href="${url}"><b>${TelegramService.encodeHtml(name)}</b></a>`;
+    const messagePrice = `<b>${splitNumber(Math.round(currentPrice))}</b>${specialPrice ? '👍' : ''}${priceChange}`
 
-    return `
-        <a href="${url}">
-            <b>${TelegramService.encodeHtml(name)}</b>
-        </a> - <b>${splitNumber(Math.round(currentPrice))}</b>${specialPrice ? '👍' : ''}${priceChange}
-    `;
+    return `${messageTitle} - ${messagePrice}${priceChange}`;
   })
   .join('\n');
