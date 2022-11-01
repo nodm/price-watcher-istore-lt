@@ -11,6 +11,8 @@ const IStoreLtPricesService = {
     const $ = load(data, null, false);
 
     const productElements = $('ul.products-grid > li > div.inner').toArray();
+    console.log('Number of elements found:', productElements.length);
+
     return productElements
       .reduce((products, product) => {
         const productElement = $(product);
