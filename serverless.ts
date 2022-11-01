@@ -8,7 +8,7 @@ import telegramMessageSender from '@functions/telegram-message-sender';
 const ONE_DAY = 24 * 60 * 60;
 
 const serverlessConfiguration: AWS = {
-  service: 'price-watcher-istore-lt',
+  service: 'snitch',
   frameworkVersion: '3',
   plugins: [
     'serverless-esbuild',
