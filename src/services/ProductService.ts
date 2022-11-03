@@ -13,12 +13,14 @@ const ProductService = {
           url: product.url,
         },
       }).promise();
+      console.log('storedProduct:', storedProduct);
 
       const productItem: ProductItem = {
         ...product,
         previousPrice: storedProduct?.currentPrice || 0,
         timestamp: new Date().toISOString(),
       };
+      console.log('productItem:', productItem);
 
       await dynamoDBClient.put({
         TableName: productTable,

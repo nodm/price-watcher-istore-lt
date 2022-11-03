@@ -1,20 +1,24 @@
-import { Context, ScheduledHandler } from 'aws-lambda';
+import { ScheduledHandler } from 'aws-lambda';
 import IStoreLtPricesService from '@services/IStoreLtPricesService';
 import ProductService from '@services/ProductService';
 import SQSService from '@services/SQSService';
+import SSMParameterService from '@services/SSMParameterService';
 import { ProductItem } from '@models/product';
 import { createTelegramMessage } from './helpers';
 
-const iStoreLtPriceWatcher: ScheduledHandler = async (_, context: Context): Promise<void> => {
+const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
   console.log('Started...');
 
-  const paths = process.env.PAGE_PATHS?.split(',');
+  const iStoreLtPagesSsm = process.env.ISTORE_LT_PAGES_SSM;
+  console.log('Request paths from SSM:', iStoreLtPagesSsm);
+  const paths = await SSMParameterService.getParameter(iStoreLtPagesSsm) as string[];
   console.log('Paths:', paths);
+
   if (!paths || !paths.length) return;
 
   const chatId = parseInt(process.env.TELEGRAM_CHAT_ID);
-  const { TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME: queueName } = process.env;
-  const sendMessage = SQSService.send(context, queueName);
+  const { TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL: queueUrl } = process.env;
+  const sendMessage = SQSService.send(queueUrl);
 
   const results = await Promise.allSettled(paths.map(async (url: string) => {
     const products = await IStoreLtPricesService.getPrices(url);

@@ -6,13 +6,14 @@ import telegramMessageProcessor from '@functions/telegram-message-processor';
 import telegramMessageSender from '@functions/telegram-message-sender';
 
 const ONE_DAY = 24 * 60 * 60;
-
+console.log(process.env);
 const serverlessConfiguration: AWS = {
   service: 'snitch',
   frameworkVersion: '3',
   plugins: [
     'serverless-esbuild',
     'serverless-dotenv-plugin',
+    'serverless-ssm-publish',
     'serverless-dynamodb-local',
     'serverless-offline',
   ],
@@ -26,11 +27,10 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-      TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-incoming-message-queue',
-      TELEGRAM_INCOMING_MESSAGE_DLQ_NAME: '${self:service}-${self:provider.stage}-telegram-incoming-message-dlq',
-      TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME: '${self:service}-${self:provider.stage}-telegram-outgoing-message-queue',
-      TELEGRAM_OUTGOING_MESSAGE_DLQ_NAME: '${self:service}-${self:provider.stage}-telegram-outgoing-message-dlq',
-      PRODUCT_TABLE_NAME: 'productsTable',
+      ISTORE_LT_PAGES_SSM: '/${self:service}/${self:provider.stage}/i-store-lt-pages',
+      TELEGRAM_INCOMING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramIncomingMessageQueue.Properties.QueueName}',
+      TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramOutgoingMessageQueue.Properties.QueueName}',
+      PRODUCT_TABLE_NAME: '${self:resources.Resources.productsTable.Properties.TableName}',
     },
     iam: {
       role: {
@@ -53,16 +53,17 @@ const serverlessConfiguration: AWS = {
             Effect: 'Allow',
             Action: [
               'dynamodb:DescribeTable',
-              // 'dynamodb:Query',
-              // 'dynamodb:Scan',
               'dynamodb:GetItem',
               'dynamodb:PutItem',
-              'dynamodb:UpdateItem',
-              // 'dynamodb:DeleteItem',
             ],
             Resource: {
-              'Fn::GetAtt': ['productsTable', 'Arn']
+              'Fn::GetAtt': ['productsTable', 'Arn'],
             },
+          },
+          {
+            Effect: 'Allow',
+            Action: ['ssm:GetParameter'],
+            Resource: ['arn:aws:ssm:*:${aws:accountId}:parameter/*'],
           },
         ],
       },
@@ -79,7 +80,7 @@ const serverlessConfiguration: AWS = {
       TelegramIncomingMessageQueue: {
         Type: 'AWS::SQS::Queue',
         Properties: {
-          QueueName: '${self:provider.environment.TELEGRAM_INCOMING_MESSAGE_QUEUE_NAME}',
+          QueueName: '${self:service}-${self:provider.stage}-telegram-incoming-message-queue',
           RedrivePolicy: {
             deadLetterTargetArn: {
               'Fn::GetAtt': ['TelegramIncomingMessageDLQ', 'Arn'],
@@ -91,14 +92,14 @@ const serverlessConfiguration: AWS = {
       TelegramIncomingMessageDLQ: {
         Type: 'AWS::SQS::Queue',
         Properties: {
-          QueueName: '${self:provider.environment.TELEGRAM_INCOMING_MESSAGE_DLQ_NAME}',
+          QueueName: '${self:service}-${self:provider.stage}-telegram-incoming-message-dlq',
           MessageRetentionPeriod: ONE_DAY,
         },
       },
       TelegramOutgoingMessageQueue: {
         Type: 'AWS::SQS::Queue',
         Properties: {
-          QueueName: '${self:provider.environment.TELEGRAM_OUTGOING_MESSAGE_QUEUE_NAME}',
+          QueueName: '${self:service}-${self:provider.stage}-telegram-outgoing-message-queue',
           RedrivePolicy: {
             deadLetterTargetArn: {
               'Fn::GetAtt': ['TelegramOutgoingMessageDLQ', 'Arn'],
@@ -110,14 +111,14 @@ const serverlessConfiguration: AWS = {
       TelegramOutgoingMessageDLQ: {
         Type: 'AWS::SQS::Queue',
         Properties: {
-          QueueName: '${self:provider.environment.TELEGRAM_OUTGOING_MESSAGE_DLQ_NAME}',
+          QueueName: '${self:service}-${self:provider.stage}-telegram-outgoing-message-dlq',
           MessageRetentionPeriod: ONE_DAY,
         },
       },
       productsTable: {
         Type: 'AWS::DynamoDB::Table',
         Properties: {
-          TableName: '${self:provider.environment.PRODUCT_TABLE_NAME}',
+          TableName: 'productsTable',
           AttributeDefinitions: [{
             AttributeName: 'url',
             AttributeType: 'S',
@@ -145,6 +146,29 @@ const serverlessConfiguration: AWS = {
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
+    },
+    dotenv: {
+      required: {
+        env: [
+          'TELEGRAM_BOT_TOKEN',
+          'TELEGRAM_CHAT_ID',
+        ],
+      },
+    },
+    ssmPublish: {
+      enabled: true,
+      params: [
+        {
+          path: '${self:provider.environment.ISTORE_LT_PAGES_SSM}',
+          type: 'StringList',
+          value: [
+            '/apple-mac-kompiuteriai/macbook-pro/shopby/14/32_gb/?limit=all',
+            '/apple-ipad-plansetes/ipad-air-2022/shopby/64gb/tik_wi_fi/',
+            '/apple-watch/apple-watch-series-8/shopby/45mm/gps_cellular_esim/aliuminio_lydinio/',
+          ].join(),
+          description: '${self:service}: Paths to the pages of iStore.lt to be crawled',
+        }
+      ],
     },
     dynamodb: {
       stages: 'dev',
