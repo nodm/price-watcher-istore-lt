@@ -6,7 +6,7 @@ import telegramMessageProcessor from '@functions/telegram-message-processor';
 import telegramMessageSender from '@functions/telegram-message-sender';
 
 const ONE_DAY = 24 * 60 * 60;
-console.log(process.env);
+
 const serverlessConfiguration: AWS = {
   service: 'snitch',
   frameworkVersion: '3',
@@ -27,6 +27,8 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      TELEGRAM_BOT_TOKEN_SSM: '/${self:service}/${self:provider.stage}/telegram-bot-token',
+      TELEGRAM_DEFAULT_CHAT_ID_SSM: '/${self:service}/${self:provider.stage}/telegram-default-chat-id',
       ISTORE_LT_PAGES_SSM: '/${self:service}/${self:provider.stage}/i-store-lt-pages',
       TELEGRAM_INCOMING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramIncomingMessageQueue.Properties.QueueName}',
       TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramOutgoingMessageQueue.Properties.QueueName}',
@@ -151,13 +153,35 @@ const serverlessConfiguration: AWS = {
       required: {
         env: [
           'TELEGRAM_BOT_TOKEN',
-          'TELEGRAM_CHAT_ID',
+          'TELEGRAM_DEFAULT_CHAT_ID',
         ],
       },
+      include: [
+        'AWS_NODEJS_CONNECTION_REUSE_ENABLED',
+        'NODE_OPTIONS',
+        'TELEGRAM_BOT_TOKEN_SSM',
+        'TELEGRAM_DEFAULT_CHAT_ID_SSM',
+        'ISTORE_LT_PAGES_SSM',
+        'TELEGRAM_INCOMING_MESSAGE_QUEUE_URL',
+        'TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL',
+        'PRODUCT_TABLE_NAME',
+      ],
     },
     ssmPublish: {
       enabled: true,
       params: [
+        {
+          path: '${self:provider.environment.TELEGRAM_BOT_TOKEN_SSM}',
+          type: 'SecureString',
+          value: '${env:TELEGRAM_BOT_TOKEN}',
+          secure: true,
+        },
+        {
+          path: '${self:provider.environment.TELEGRAM_DEFAULT_CHAT_ID_SSM}',
+          type: 'SecureString',
+          value: '${env:TELEGRAM_DEFAULT_CHAT_ID}',
+          secure: true,
+        },
         {
           path: '${self:provider.environment.ISTORE_LT_PAGES_SSM}',
           type: 'StringList',
@@ -167,7 +191,7 @@ const serverlessConfiguration: AWS = {
             '/apple-watch/apple-watch-series-8/shopby/45mm/gps_cellular_esim/aliuminio_lydinio/',
           ].join(),
           description: '${self:service}: Paths to the pages of iStore.lt to be crawled',
-        }
+        },
       ],
     },
     dynamodb: {
