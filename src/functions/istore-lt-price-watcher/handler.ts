@@ -18,7 +18,7 @@ const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
 
   const chatIdSsm = process.env.TELEGRAM_DEFAULT_CHAT_ID_SSM;
   console.log('Request paths from SSM:', chatIdSsm);
-  const chatIdString = await SSMParameterService.getParameter(iStoreLtPagesSsm) as string;
+  const chatIdString = await SSMParameterService.getParameter(chatIdSsm) as string;
   console.log('Paths:', chatIdString);
   const chatId = parseInt(chatIdString);
 
