@@ -1,28 +1,30 @@
 import { ScheduledHandler } from 'aws-lambda';
+
+import { EnvVariable, getEnvVariable } from '@config/get-env-variable';
+import { ProductItem } from '@models/product';
 import IStoreLtPricesService from '@services/IStoreLtPricesService';
 import ProductService from '@services/ProductService';
 import SQSService from '@services/SQSService';
 import SSMParameterService from '@services/SSMParameterService';
-import { ProductItem } from '@models/product';
 import { createTelegramMessage } from './helpers';
 
 const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
   console.log('Started...');
 
-  const iStoreLtPagesSsm = process.env.ISTORE_LT_PAGES_SSM;
+  const iStoreLtPagesSsm = getEnvVariable(EnvVariable.ISTORE_LT_PAGES_SSM);
   console.log('Request paths from SSM:', iStoreLtPagesSsm);
   const paths = await SSMParameterService.getParameter(iStoreLtPagesSsm) as string[];
   console.log('Paths:', paths);
 
   if (!paths || !paths.length) return;
 
-  const chatIdSsm = process.env.TELEGRAM_DEFAULT_CHAT_ID_SSM;
+  const chatIdSsm = getEnvVariable(EnvVariable.TELEGRAM_DEFAULT_CHAT_ID_SSM);
   console.log('Request paths from SSM:', chatIdSsm);
   const chatIdString = await SSMParameterService.getParameter(chatIdSsm) as string;
   console.log('Paths:', chatIdString);
   const chatId = parseInt(chatIdString);
 
-  const queueUrl = process.env.TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL;
+  const queueUrl = getEnvVariable(EnvVariable.TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL);
   const sendMessage = SQSService.send(queueUrl);
 
   const results = await Promise.allSettled(paths.map(async (url: string) => {
