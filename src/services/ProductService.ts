@@ -1,7 +1,8 @@
+import { EnvVariable, getEnvVariable } from '@config/get-env-variable';
 import { Product, ProductItem } from '@models/product';
 import { provideDynamoDBClient } from '@services/dynamoDBClientProvider';
 
-const productTable = process.env.PRODUCT_TABLE_NAME;
+const productTable = getEnvVariable(EnvVariable.PRODUCT_TABLE_NAME);
 const dynamoDBClient = provideDynamoDBClient();
 
 const ProductService = {

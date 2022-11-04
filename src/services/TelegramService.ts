@@ -1,3 +1,4 @@
+import { EnvVariable, getEnvVariable } from '@config/get-env-variable';
 import HttpsService from '@services/HttpsService';
 import SSMParameterService from '@services/SSMParameterService';
 
@@ -7,7 +8,7 @@ const TelegramService = {
     text: string,
     parseMode = 'HTML',
   ) => {
-    const telegramBotTokenSsm = process.env.TELEGRAM_BOT_TOKEN_SSM;
+    const telegramBotTokenSsm = getEnvVariable(EnvVariable.TELEGRAM_BOT_TOKEN_SSM);
     console.log('Request paths from SSM:', telegramBotTokenSsm);
     const telegramBotToken = await SSMParameterService.getParameter(telegramBotTokenSsm) as string;
     console.log('Paths:', telegramBotToken);

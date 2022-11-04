@@ -1,5 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { Message } from '@grammyjs/types';
+
+import { EnvVariable, getEnvVariable } from '@config/get-env-variable';
 import { formatJSONResponse } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import SQSService from '@services/SQSService';
@@ -8,7 +10,7 @@ const telegramBotWebhook = async (event: APIGatewayProxyEvent): Promise<APIGatew
   console.log('botWebhook :: Message received', event.body);
 
   const message = (typeof event.body === 'string' ? JSON.parse(event.body) : event.body)?.message as Message;
-  const { TELEGRAM_INCOMING_MESSAGE_QUEUE_URL: queueUrl } = process.env;
+  const queueUrl = getEnvVariable(EnvVariable.TELEGRAM_INCOMING_MESSAGE_QUEUE_URL);
 
   try {
     await SQSService.send(queueUrl)(message);

@@ -1,11 +1,13 @@
 import { SQSEvent, SQSHandler, SQSRecord } from 'aws-lambda';
 import { Message } from '@grammyjs/types';
+
+import { EnvVariable, getEnvVariable } from '@config/get-env-variable';
 import SQSService from '@services/SQSService';
 
 const telegramMessageProcessor: SQSHandler = async (event: SQSEvent) => {
   console.log('telegramMessageProcessor :: Message received', event);
 
-  const { TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL: queueUrl } = process.env;
+  const queueUrl = getEnvVariable(EnvVariable.TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL);
 
   const results = await Promise.allSettled(event.Records.map((record: SQSRecord) => {
     const message = JSON.parse(record.body) as Message;
