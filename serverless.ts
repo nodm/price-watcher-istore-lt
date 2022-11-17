@@ -135,6 +135,24 @@ const serverlessConfiguration: AWS = {
           },
         },
       },
+      philatelyLithuaniaTable: {
+        Type: 'AWS::DynamoDB::Table',
+        Properties: {
+          TableName: 'productsTable',
+          AttributeDefinitions: [{
+            AttributeName: 'href',
+            AttributeType: 'S',
+          }],
+          KeySchema: [{
+            AttributeName: 'href',
+            KeyType: 'HASH',
+          }],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1,
+          },
+        },
+      },
     },
   },
   package: { individually: true },
