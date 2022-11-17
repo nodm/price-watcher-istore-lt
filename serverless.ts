@@ -138,7 +138,7 @@ const serverlessConfiguration: AWS = {
       philatelyLithuaniaTable: {
         Type: 'AWS::DynamoDB::Table',
         Properties: {
-          TableName: 'productsTable',
+          TableName: 'philatelyLithuaniaTable',
           AttributeDefinitions: [{
             AttributeName: 'href',
             AttributeType: 'S',
