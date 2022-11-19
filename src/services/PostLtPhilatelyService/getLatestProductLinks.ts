@@ -11,5 +11,5 @@ export const getLatestProductLinks = async (): Promise<string[]> => {
   const productElements = $(PRODUCT_LINK_SELECTOR).toArray();
 
   return productElements
-    .map(productElement => [POST_LT_HOST, encodeURI($(productElement).attr('href'))].join('/'));
+    .map(productElement => POST_LT_HOST + encodeURI($(productElement).attr('href')));
 };
