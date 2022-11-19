@@ -31,7 +31,10 @@ const parseTitle = (productElement) => {
   const dateString = titleText.substring(0, 10);
   const [year, month, date] = dateString.split(' ');
   console.log(year, month, date);
-  const  dateOfIssue = (new Date(parseInt(year), parseInt(month) - 1, parseInt(date), 12, 0,0, 0));
+  const  dateOfIssue =
+    (new Date(parseInt(year), parseInt(month) - 1, parseInt(date), 12, 0,0, 0))
+      .toISOString()
+      .substring(0,10);
 
   const rawTitle = sanitize(titleText.substring(10));
 
