@@ -2,6 +2,7 @@ import type { AWS } from '@serverless/typescript';
 
 import telegramBotWebhook from '@functions/telegram-bot-webhook';
 import iStoreLtPriceWatcher from '@functions/istore-lt-price-watcher';
+import postLtPhilatelyWatcher from '@functions/post-lt-philately-watcher';
 import telegramMessageProcessor from '@functions/telegram-message-processor';
 import telegramMessageSender from '@functions/telegram-message-sender';
 
@@ -32,7 +33,8 @@ const serverlessConfiguration: AWS = {
       ISTORE_LT_PAGES_SSM: '/${self:service}/${self:provider.stage}/i-store-lt-pages',
       TELEGRAM_INCOMING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramIncomingMessageQueue.Properties.QueueName}',
       TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramOutgoingMessageQueue.Properties.QueueName}',
-      PRODUCT_TABLE_NAME: '${self:resources.Resources.productsTable.Properties.TableName}',
+      PRODUCTS_TABLE_NAME: '${self:resources.Resources.productsTable.Properties.TableName}',
+      PHILATELY_PRODUCTS_TABLE_NAME: '${self:resources.Resources.philatelyProductsTable.Properties.TableName}',
     },
     iam: {
       role: {
@@ -74,6 +76,7 @@ const serverlessConfiguration: AWS = {
   functions: {
     telegramBotWebhook,
     iStoreLtPriceWatcher,
+    postLtPhilatelyWatcher,
     telegramMessageProcessor,
     telegramMessageSender,
   },
@@ -135,10 +138,10 @@ const serverlessConfiguration: AWS = {
           },
         },
       },
-      philatelyLithuaniaTable: {
+      philatelyProductsTable: {
         Type: 'AWS::DynamoDB::Table',
         Properties: {
-          TableName: 'philatelyLithuaniaTable',
+          TableName: 'philatelyProductsTable',
           AttributeDefinitions: [{
             AttributeName: 'href',
             AttributeType: 'S',
@@ -182,7 +185,8 @@ const serverlessConfiguration: AWS = {
         'ISTORE_LT_PAGES_SSM',
         'TELEGRAM_INCOMING_MESSAGE_QUEUE_URL',
         'TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL',
-        'PRODUCT_TABLE_NAME',
+        'PRODUCTS_TABLE_NAME',
+        'PHILATELY_LITHUANIA_TABLE_NAME',
       ],
     },
     ssmPublish: {
