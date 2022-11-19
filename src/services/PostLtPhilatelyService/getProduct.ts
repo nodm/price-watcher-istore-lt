@@ -30,17 +30,22 @@ const parseTitle = (productElement) => {
 
   const dateString = titleText.substring(0, 10);
   const [year, month, date] = dateString.split(' ');
-  console.log(year, month, date);
-  const issueDate = new Date(
-    parseInt(year),
-    parseInt(month) - 1,
-    parseInt(date),
-    12,
-    0,
-    0,
-    0
-  );
-  const  dateOfIssue = issueDate?.toISOString()?.substring(0,10) ?? '';
+
+  let dateOfIssue = '';
+  try {
+    const issueDate = new Date(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(date),
+      12,
+      0,
+      0,
+      0
+    );
+    dateOfIssue = issueDate?.toISOString()?.substring(0,10) ?? '';
+  } catch (error) {
+    console.log('Parsing error:', error, productElement);
+  }
 
   const rawTitle = sanitize(titleText.substring(10));
 
