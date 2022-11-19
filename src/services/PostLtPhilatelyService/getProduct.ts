@@ -13,7 +13,7 @@ export const getProduct = async (url: string): Promise<PhilatelyProduct> => {
   const $ = load(data, null, false);
   const productElement = $(PRODUCT_SELECTOR).first();
 
-  console.log('PostLtPhilatelyService::getProduct product element founded', productElement);
+  console.log('PostLtPhilatelyService::getProduct product element founded', productElement.html());
 
   if (!productElement) {
     return null;
@@ -34,28 +34,35 @@ export const getProduct = async (url: string): Promise<PhilatelyProduct> => {
 
 const TITLE_SELECTOR = 'h1.top';
 const parseTitle = (productElement) => {
-  const titleText = productElement.find(TITLE_SELECTOR).text();
-
-  const dateString = titleText.substring(0, 10);
-  const [year, month, date] = dateString.split(' ');
-
+  const titleText = productElement.find(TITLE_SELECTOR).text().trim();
+  const hasDate = !!titleText.match(/^\d/);
+  let issueYear = 0;
   let dateOfIssue = '';
-  try {
-    const issueDate = new Date(
-      parseInt(year),
-      parseInt(month) - 1,
-      parseInt(date),
-      12,
-      0,
-      0,
-      0
-    );
-    dateOfIssue = issueDate?.toISOString()?.substring(0,10) ?? '';
-  } catch (error) {
-    console.log('Parsing error:', error, productElement);
+  let rawTitle = titleText;
+
+  if (hasDate) {
+    const dateString = titleText.substring(0, 10);
+    const [year, month, date] = dateString.split(' ');
+
+    try {
+      const issueDate = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(date),
+        12,
+        0,
+        0,
+        0
+      );
+      dateOfIssue = issueDate?.toISOString()?.substring(0,10) ?? '';
+      issueYear = parseInt(year);
+      rawTitle = rawTitle.substring(10)
+    } catch (error) {
+      console.log('Parsing error:', error, productElement);
+    }
   }
 
-  const rawTitle = sanitize(titleText.substring(10));
+  rawTitle = sanitize(rawTitle);
 
   let type = PhilatelyProductType.STAMP;
   if (rawTitle.includes('PVD') || rawTitle.includes('PDV') || rawTitle.includes('Pirmos dienos vokas')) {
@@ -85,7 +92,7 @@ const parseTitle = (productElement) => {
     .trim();
   const [, title = titleWithoutType] = titleWithoutType.match(/^"(.*)?"$/) ?? [];
 
-  return { year: parseInt(year), dateOfIssue, type, title };
+  return { year: issueYear, dateOfIssue, type, title };
 };
 
 const IMAGE_SELECTOR = '.item .img > img'
