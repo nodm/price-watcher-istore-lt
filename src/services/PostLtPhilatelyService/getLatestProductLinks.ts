@@ -1,4 +1,3 @@
-import * as path from 'node:path';
 import { load } from 'cheerio';
 
 import HttpsService from '../HttpsService';
@@ -12,5 +11,5 @@ export const getLatestProductLinks = async (): Promise<string[]> => {
   const productElements = $(PRODUCT_LINK_SELECTOR).toArray();
 
   return productElements
-    .map(productElement => path.join(POST_LT_HOST, encodeURI($(productElement).attr('href'))));
+    .map(productElement => [POST_LT_HOST, encodeURI($(productElement).attr('href'))].join('/'));
 };

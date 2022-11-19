@@ -1,4 +1,3 @@
-import * as path from 'node:path';
 import { load } from 'cheerio';
 
 import { PhilatelyProduct, PhilatelyProductType } from '@models/philatelyProduct';
@@ -69,10 +68,10 @@ const parseTitle = (productElement) => {
 
 const IMAGE_SELECTOR = '.item .img > img'
 const parseImg = (productElement) => {
-  const imgUrl = path.join(
+  const imgUrl = [
     POST_LT_HOST,
     encodeURI(productElement.find(IMAGE_SELECTOR)?.attr('src')?.replace('/320x', '/1280x')),
-  );
+  ].join('/');
 
   return { imgUrl };
 };

@@ -2,11 +2,10 @@ import { PhilatelyProduct } from '@models/philatelyProduct';
 import TelegramService from '@services/TelegramService';
 
 export const createTelegramMessage = (product: PhilatelyProduct): string => {
-    const href = product.href.replace('http://', 'https://');
-    const title = `<a href="${href}"><b>${TelegramService.encodeHtml(product.title)}</b></a>`;
+    const title = `<a href="${product.href}"><b>${TelegramService.encodeHtml(product.title)}</b></a>`;
     const type = `<b>${product.type}</b>`;
     const year = product.year && `<b>${product.year}</b>`;
-    const dateOfIssue = product.dateOfIssue && `<b>Date:</b> <i>${product.dateOfIssue}</i>`;
+    const dateOfIssue = product.dateOfIssue && `<b>Date:</b> <i>${product.dateOfIssue.substring(0, 10)}</i>`;
     const catalogNumber = product.catalogNumber && `<b>No.</b> <i>${product.catalogNumber}</i>`;
     const price = product.price && `<i>${product.price.value} ${product.price.currency}</i>`;
     const meta = product.meta.length && `<i>${TelegramService.encodeHtml(product.meta.join('\n'))}</i>`;
@@ -22,5 +21,5 @@ export const createTelegramMessage = (product: PhilatelyProduct): string => {
         price,
         meta,
         description,
-    ].filter(Boolean).join('\n');
+    ].filter(Boolean).join('\n\n');
 };
