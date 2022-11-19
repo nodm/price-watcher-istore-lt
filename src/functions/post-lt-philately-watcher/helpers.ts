@@ -5,9 +5,9 @@ export const createTelegramMessage = (product: PhilatelyPuroduct): string => {
     const title = `<a href="${product.href}"><b>${TelegramService.encodeHtml(product.title)}</b></a>`;
     const type = `<i>${product.type}</i>`;
     const year = product.year && `<b>${product.year}</b>`;
-    const dateOfIssue = product.dateOfIssue && `<b>Date:</b> <i>${product.dateOfIssue}</i>`;
-    const catalogNumber = product.catalogNumber && `<b>No.</b> <i>${product.catalogNumber}</i>`;
-    const price = product.price && `<b>Price:</b> <i>${product.price.value} ${product.price.currency}</i>`;
+    const dateOfIssue = product.dateOfIssue && `<b>Date:</b> ${product.dateOfIssue}`;
+    const catalogNumber = product.catalogNumber && `<b>No.</b> ${product.catalogNumber}`;
+    const price = product.price && `<b>Price:</b> ${product.price.value} ${product.price.currency}`;
     const meta = product.meta.length && `<i>${TelegramService.encodeHtml(product.meta.join('\n'))}</i>`;
     const description = product.description.length &&
       `<b>Description:</b>\n${TelegramService.encodeHtml(product.description.join('\n'))}`;
@@ -16,7 +16,7 @@ export const createTelegramMessage = (product: PhilatelyPuroduct): string => {
     return [
         title,
         year,
-        [dateOfIssue, type, catalogNumber].filter(Boolean).join('&mbsp;'),
+        [dateOfIssue, type, catalogNumber].filter(Boolean).join(' '),
         price,
         meta,
         description,
