@@ -52,7 +52,7 @@ const parseTitle = (productElement) => {
   let type = PhilatelyProductType.STAMP;
   if (rawTitle.includes('PVD') || rawTitle.includes('PDV') || rawTitle.includes('Pirmos dienos vokas')) {
     type = PhilatelyProductType.PDV;
-  } else if(rawTitle.includes('ML') || rawTitle.includes('Mažas lapelis')) {
+  } else if(rawTitle.includes('ML') || rawTitle.includes('Mažas lapelis')|| rawTitle.includes('Mažas lapeiis')) {
     type = PhilatelyProductType.ML;
   } else if(rawTitle.includes('KM') || rawTitle.includes('Kartmaksimumas')) {
     type = PhilatelyProductType.KM;
@@ -66,7 +66,7 @@ const parseTitle = (productElement) => {
 
   const titleWithoutType = [
     'PVD', 'PDV', 'Pirmos dienos vokas',
-    'ML', 'Mažas lapelis',
+    'ML', 'Mažas lapelis', 'Mažas lapeiis',
     'KM', 'Kartmaksimumas',
     'PA',
     'Bukletas',
