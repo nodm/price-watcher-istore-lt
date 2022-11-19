@@ -2,7 +2,7 @@ import { EnvVariable, getEnvVariable } from '@config/get-env-variable';
 import { PhilatelyProduct } from '@models/philatelyProduct';
 import { provideDynamoDBClient } from '@services/dynamoDBClientProvider';
 
-const philatelyProductsTable = getEnvVariable(EnvVariable.PHILATELY_LITHUANIA_TABLE_NAME);
+const philatelyProductsTable = getEnvVariable(EnvVariable.PHILATELY_PRODUCTS_TABLE_NAME);
 const dynamoDBClient = provideDynamoDBClient();
 
 const PhilatelyProductsService = {

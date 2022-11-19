@@ -186,7 +186,7 @@ const serverlessConfiguration: AWS = {
         'TELEGRAM_INCOMING_MESSAGE_QUEUE_URL',
         'TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL',
         'PRODUCTS_TABLE_NAME',
-        'PHILATELY_LITHUANIA_TABLE_NAME',
+        'PHILATELY_PRODUCTS_TABLE_NAME',
       ],
     },
     ssmPublish: {
