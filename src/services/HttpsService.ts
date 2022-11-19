@@ -1,8 +1,11 @@
 import * as https from 'node:https';
+import * as http from 'node:http';
 
 const HttpsService = {
   get: (url: string) => new Promise<string | never>((resolve, reject) => {
-    https.get(url, (res) => {
+    const service = url.startsWith('https') ? https : http;
+
+    service.get(url, (res) => {
       const data = [];
 
       res.on('data', chunk => {
