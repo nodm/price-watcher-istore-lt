@@ -7,21 +7,29 @@ import { POST_LT_HOST } from './constants.js';
 const PRODUCT_SELECTOR = 'div#maincontent';
 
 export const getProduct = async (url: string): Promise<PhilatelyProduct> => {
+  console.log('PostLtPhilatelyService::getProduct called with', url);
+
   const data = await HttpsService.get(url);
   const $ = load(data, null, false);
   const productElement = $(PRODUCT_SELECTOR).first();
+
+  console.log('PostLtPhilatelyService::getProduct product element founded', productElement);
 
   if (!productElement) {
     return null;
   }
 
-  return {
+  const product = {
     href: url,
     ...parseTitle(productElement),
     ...parseImg(productElement),
     ...parsePrice(productElement),
     ...getDescription(productElement, $),
   };
+
+  console.log('PostLtPhilatelyService::getProduct product', product);
+
+  return product;
 };
 
 const TITLE_SELECTOR = 'h1.top';
