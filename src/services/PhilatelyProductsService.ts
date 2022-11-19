@@ -7,6 +7,8 @@ const dynamoDBClient = provideDynamoDBClient();
 
 const PhilatelyProductsService = {
   getProduct: async (href: string): Promise<PhilatelyProduct> | never => {
+    console.log('PhilatelyProductsService::getProduct called with', href);
+
     try {
       const { Item: product } = await dynamoDBClient.get({
         TableName: philatelyProductsTable,
@@ -14,24 +16,29 @@ const PhilatelyProductsService = {
           href,
         },
       }).promise();
-      console.log('getProduct :: product', product);
+
+      console.log('PhilatelyProductsService::getProduct product founded', product);
 
       return product as PhilatelyProduct;
     } catch(error) {
-      console.log(error);
+      console.log('PhilatelyProductsService::getProduct error', error);
     }
   },
 
   addProduct: async (product: PhilatelyProduct): Promise<PhilatelyProduct> | never => {
+    console.log('PhilatelyProductsService::addProduct called with', product);
+
     try {
       await dynamoDBClient.put({
         TableName: philatelyProductsTable,
         Item: product,
       }).promise();
 
+      console.log('PhilatelyProductsService::addProduct product added');
+
       return product;
     } catch(error) {
-      console.log(error);
+      console.log('PhilatelyProductsService::addProduct error', error);
     }
   },
 };
