@@ -66,6 +66,17 @@ const serverlessConfiguration: AWS = {
           },
           {
             Effect: 'Allow',
+            Action: [
+              'dynamodb:DescribeTable',
+              'dynamodb:GetItem',
+              'dynamodb:PutItem',
+            ],
+            Resource: {
+              'Fn::GetAtt': ['philatelyProductsTable', 'Arn'],
+            },
+          },
+          {
+            Effect: 'Allow',
             Action: ['ssm:GetParameter'],
             Resource: ['arn:aws:ssm:*:${aws:accountId}:parameter/*'],
           },
