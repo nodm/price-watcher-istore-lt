@@ -2,14 +2,14 @@ import { EnvVariable, getEnvVariable } from '@config/get-env-variable';
 import { Product, ProductItem } from '@models/product';
 import { provideDynamoDBClient } from '@services/dynamoDBClientProvider';
 
-const productTable = getEnvVariable(EnvVariable.PRODUCT_TABLE_NAME);
+const productsTable = getEnvVariable(EnvVariable.PRODUCTS_TABLE_NAME);
 const dynamoDBClient = provideDynamoDBClient();
 
 const ProductService = {
   setPrice: async (product: Product): Promise<ProductItem> => {
     try {
       const { Item: storedProduct } = await dynamoDBClient.get({
-        TableName: productTable,
+        TableName: productsTable,
         Key: {
           url: product.url,
         },
@@ -24,7 +24,7 @@ const ProductService = {
       console.log('productItem:', productItem);
 
       await dynamoDBClient.put({
-        TableName: productTable,
+        TableName: productsTable,
         Item: productItem,
       }).promise();
 
