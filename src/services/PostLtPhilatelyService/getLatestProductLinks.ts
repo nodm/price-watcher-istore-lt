@@ -1,7 +1,7 @@
 import { load } from 'cheerio';
 
+import { POST_LT_HOST, POST_LT_PHILATELY_URL } from '@services/PostLtPhilatelyService/constants';
 import HttpsService from '../HttpsService';
-import { POST_LT_HOST, POST_LT_PHILATELY_URL } from './constants.js';
 
 const PRODUCT_LINK_SELECTOR = '.productlist > .itemsRow  a.title';
 

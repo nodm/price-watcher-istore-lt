@@ -1,18 +1,16 @@
 export const enum PhilatelyProductType {
   STAMP = 'Stamp',
-  PDV = 'PDV',
-  ML = 'ML',
-  KM = 'KM',
+  FIRST_DAY_COVER = 'First-day cover',
+  SMALL_SHEET = 'Small sheet',
+  MAXIMUM_CARD = 'Maximum card',
   PA = 'PA',
-  BOOKLET = 'BOOKLET',
-  ANNUAL_COLLECTION = 'ANNUAL_COLLECTION',
+  BOOKLET = 'Booklet',
+  ANNUAL_COLLECTION = 'Annual collection',
+  OTHER = 'Other',
 }
 
 export interface PhilatelyProduct {
   href: string;
-  catalogNumber?: string | undefined;
-  dateOfIssue: string;
-  year: number | null,
   type: PhilatelyProductType;
   title: string;
   imgUrl: string;
@@ -20,6 +18,9 @@ export interface PhilatelyProduct {
     value: number;
     currency: string;
   };
-  meta: string[];
-  description: string[],
+  catalogNumber?: string | undefined;
+  dateOfIssue?: string;
+  year?: number,
+  meta?: string[];
+  description?: string[],
 }
