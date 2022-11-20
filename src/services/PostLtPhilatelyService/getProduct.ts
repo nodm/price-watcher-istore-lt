@@ -1,12 +1,12 @@
 import { load } from 'cheerio';
 
 import { PhilatelyProduct, PhilatelyProductType } from '@models/philatelyProduct';
+import { POST_LT_HOST } from '@services/PostLtPhilatelyService/constants';
 import HttpsService from '../HttpsService';
-import { POST_LT_HOST } from './constants.js';
 
 const PRODUCT_SELECTOR = 'div#maincontent';
 
-export const getProduct = async (url: string): Promise<PhilatelyProduct> => {
+export const getProduct = async (url: string): Promise<Partial<PhilatelyProduct>> => {
   console.log('PostLtPhilatelyService::getProduct called with', url);
 
   const data = await HttpsService.get(url);
@@ -29,7 +29,16 @@ export const getProduct = async (url: string): Promise<PhilatelyProduct> => {
 
   console.log('PostLtPhilatelyService::getProduct product', product);
 
-  return product;
+  const normalizedProduct = Object.entries(product)
+    .filter(([, value]) => Array.isArray(value) ? value.length : Boolean(value))
+    .reduce((finalProduct, [key, value]) => ({
+      ...finalProduct,
+      [key]: value,
+    }), {});
+
+  console.log('PostLtPhilatelyService::getProduct normalizedProduct', normalizedProduct);
+
+  return normalizedProduct;
 };
 
 const TITLE_SELECTOR = 'h1.top';
@@ -45,17 +54,25 @@ const parseTitle = (productElement) => {
     const [year, month, date] = dateString.split(' ');
 
     try {
+      if ([year, month, date].some(v => !v.match(/^[0-9]*$/))) {
+        if (year.match(/^[0-9]*$/)) {
+          issueYear = parseInt(year, 10);
+        }
+
+        throw new TypeError(`Incorrect date ${year}-${month}-${date}`);
+      }
+
       const issueDate = new Date(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(date),
+        parseInt(year, 10),
+        parseInt(month, 10) - 1,
+        parseInt(date, 10),
         12,
         0,
         0,
         0
       );
       dateOfIssue = issueDate?.toISOString()?.substring(0,10) ?? '';
-      issueYear = parseInt(year);
+      issueYear = parseInt(year, 10);
       rawTitle = rawTitle.substring(10)
     } catch (error) {
       console.log('Parsing error:', error, productElement);
@@ -66,11 +83,11 @@ const parseTitle = (productElement) => {
 
   let type = PhilatelyProductType.STAMP;
   if (rawTitle.includes('PVD') || rawTitle.includes('PDV') || rawTitle.includes('Pirmos dienos vokas')) {
-    type = PhilatelyProductType.PDV;
+    type = PhilatelyProductType.FIRST_DAY_COVER;
   } else if(rawTitle.includes('ML') || rawTitle.includes('Mažas lapelis')|| rawTitle.includes('Mažas lapeiis')) {
-    type = PhilatelyProductType.ML;
+    type = PhilatelyProductType.SMALL_SHEET;
   } else if(rawTitle.includes('KM') || rawTitle.includes('Kartmaksimumas')) {
-    type = PhilatelyProductType.KM;
+    type = PhilatelyProductType.MAXIMUM_CARD;
   } else if(rawTitle.includes('PA')) {
     type = PhilatelyProductType.PA;
   } else if(rawTitle.includes('Bukletas')) {
@@ -176,4 +193,4 @@ const sanitize = (str: string): string => {
     .replace(/”/g, '"')
     .replace(/„/g, '"')
     .replace(/ /g, '');
-}
+};
