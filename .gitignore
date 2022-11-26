@@ -11,6 +11,10 @@ jspm_packages
 
 # IDE derictories
 .idea
+.vscode
 
 # environment variables
 .env
+
+# Local crawler for the post.lt website
+src/functions/post-lt-philately-watcher/local-crawler
