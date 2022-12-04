@@ -215,6 +215,8 @@ const serverlessConfiguration: AWS = {
     dotenv: {
       required: {
         env: [
+          'SLACK_TOKEN',
+          'SLACK_CHANNEL',
           'TELEGRAM_BOT_TOKEN',
           'TELEGRAM_DEFAULT_CHAT_ID',
         ],
@@ -222,6 +224,8 @@ const serverlessConfiguration: AWS = {
       include: [
         'AWS_NODEJS_CONNECTION_REUSE_ENABLED',
         'NODE_OPTIONS',
+        'SLACK_TOKEN_SSM',
+        'SLACK_CHANNEL_SSM',
         'TELEGRAM_BOT_TOKEN_SSM',
         'TELEGRAM_DEFAULT_CHAT_ID_SSM',
         'ISTORE_LT_PAGES_SSM',
