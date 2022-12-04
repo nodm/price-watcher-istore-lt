@@ -3,6 +3,7 @@ import type { AWS } from '@serverless/typescript';
 import telegramBotWebhook from '@functions/telegram-bot-webhook';
 import iStoreLtPriceWatcher from '@functions/istore-lt-price-watcher';
 import postLtPhilatelyWatcher from '@functions/post-lt-philately-watcher';
+import slackMessageSender from '@functions/slack-message-sender';
 import telegramMessageProcessor from '@functions/telegram-message-processor';
 import telegramMessageSender from '@functions/telegram-message-sender';
 
@@ -30,9 +31,12 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       TELEGRAM_BOT_TOKEN_SSM: '/${self:service}/${self:provider.stage}/telegram-bot-token',
       TELEGRAM_DEFAULT_CHAT_ID_SSM: '/${self:service}/${self:provider.stage}/telegram-default-chat-id',
+      SLACK_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-token',
+      SLACK_CHANNEL_SSM: '/${self:service}/${self:provider.stage}/slack-channel',
       ISTORE_LT_PAGES_SSM: '/${self:service}/${self:provider.stage}/i-store-lt-pages',
       TELEGRAM_INCOMING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramIncomingMessageQueue.Properties.QueueName}',
       TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramOutgoingMessageQueue.Properties.QueueName}',
+      SLACK_OUTGOING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.SlackOutgoingMessageQueue.Properties.QueueName}',
       PRODUCTS_TABLE_NAME: '${self:resources.Resources.productsTable.Properties.TableName}',
       PHILATELY_PRODUCTS_TABLE_NAME: '${self:resources.Resources.philatelyProductsTable.Properties.TableName}',
     },
@@ -51,6 +55,13 @@ const serverlessConfiguration: AWS = {
             Action: ['sqs:SendMessage'],
             Resource: {
               'Fn::GetAtt': ['TelegramOutgoingMessageQueue', 'Arn'],
+            },
+          },
+          {
+            Effect: 'Allow',
+            Action: ['sqs:SendMessage'],
+            Resource: {
+              'Fn::GetAtt': ['SlackOutgoingMessageQueue', 'Arn'],
             },
           },
           {
@@ -88,6 +99,7 @@ const serverlessConfiguration: AWS = {
     telegramBotWebhook,
     iStoreLtPriceWatcher,
     postLtPhilatelyWatcher,
+    slackMessageSender,
     telegramMessageProcessor,
     telegramMessageSender,
   },
@@ -128,6 +140,25 @@ const serverlessConfiguration: AWS = {
         Type: 'AWS::SQS::Queue',
         Properties: {
           QueueName: '${self:service}-${self:provider.stage}-telegram-outgoing-message-dlq',
+          MessageRetentionPeriod: ONE_DAY,
+        },
+      },
+      SlackOutgoingMessageQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: '${self:service}-${self:provider.stage}-slack-outgoing-message-queue',
+          RedrivePolicy: {
+            deadLetterTargetArn: {
+              'Fn::GetAtt': ['SlackOutgoingMessageDLQ', 'Arn'],
+            },
+            maxReceiveCount: 5,
+          },
+        },
+      },
+      SlackOutgoingMessageDLQ: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: '${self:service}-${self:provider.stage}-slack-outgoing-message-dlq',
           MessageRetentionPeriod: ONE_DAY,
         },
       },
@@ -213,6 +244,18 @@ const serverlessConfiguration: AWS = {
           path: '${self:provider.environment.TELEGRAM_DEFAULT_CHAT_ID_SSM}',
           type: 'SecureString',
           value: '${env:TELEGRAM_DEFAULT_CHAT_ID}',
+          secure: true,
+        },
+        {
+          path: '${self:provider.environment.SLACK_TOKEN_SSM}',
+          type: 'SecureString',
+          value: '${env:SLACK_TOKEN}',
+          secure: true,
+        },
+        {
+          path: '${self:provider.environment.SLACK_CHANNEL_SSM}',
+          type: 'SecureString',
+          value: '${env:SLACK_CHANNEL}',
           secure: true,
         },
         {
