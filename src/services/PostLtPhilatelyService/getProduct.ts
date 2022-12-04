@@ -102,6 +102,9 @@ const parseTitle = (productElement) => {
     'KM', 'Kartmaksimumas',
     'PA',
     'Bukletas',
+    'Pašto ženklai išimti iš apyvartos',
+    'Pašto ženklas išimtas iš apyvartos',
+    'Pašto ženklų serija išimta iš apyvartos',
     '\\(\\)\.',
     '\\(\\)',
   ]
@@ -145,6 +148,10 @@ const getDescription = (productElement, $) => {
 
   return  descriptionLines.reduce((parsedDescription, descriptionLine) => {
     if (!descriptionLine) {
+      return parsedDescription;
+    }
+
+    if (descriptionLine.includes('DĖMESIO! PAŠTO ŽENKLAI SU LITO NOMINALU NEGALIOJA SIUNTIMO PASLAUGOMS APMOKĖTI')) {
       return parsedDescription;
     }
 

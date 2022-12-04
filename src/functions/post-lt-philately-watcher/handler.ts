@@ -5,8 +5,7 @@ import { PhilatelyProduct } from '@models/philatelyProduct';
 import PostLtPhilatelyService from '@services/PostLtPhilatelyService';
 import PhilatelyProductsService from '@services/PhilatelyProductsService';
 import SQSService from '@services/SQSService';
-import SSMParameterService from '@services/SSMParameterService';
-import { createTelegramMessage } from './helpers';
+import { createSlackMessage } from './helpers';
 
 const postLtPhilatelyWatcher: ScheduledHandler = async (): Promise<void> => {
   console.log('Started...');
@@ -62,21 +61,15 @@ const postLtPhilatelyWatcher: ScheduledHandler = async (): Promise<void> => {
     console.log('Product stored successfully:', result.value);
   });
 
-  const chatIdSsm = getEnvVariable(EnvVariable.TELEGRAM_DEFAULT_CHAT_ID_SSM);
-  console.log('Request paths from SSM:', chatIdSsm);
-  const chatIdString = await SSMParameterService.getParameter(chatIdSsm) as string;
-  console.log('Paths:', chatIdString);
-  const chatId = parseInt(chatIdString);
-
-  const queueUrl = getEnvVariable(EnvVariable.TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL);
+  const queueUrl = getEnvVariable(EnvVariable.SLACK_OUTGOING_MESSAGE_QUEUE_URL);
   const sendMessage = SQSService.send(queueUrl);
 
   const results = await Promise.allSettled(newProducts.map(async (product: PhilatelyProduct) => {
 
-    const text = createTelegramMessage(product);
-    console.log('Telegram message text', text);
+    const message = createSlackMessage(product);
+    console.log('Slack message text', message);
 
-    return sendMessage({ chatId,  text, parseMode: 'HTML' })
+    return sendMessage(message)
   }));
 
   results

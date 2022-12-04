@@ -1,23 +1,66 @@
 import { PhilatelyProduct } from '@models/philatelyProduct';
-import TelegramService from '@services/TelegramService';
+import SlackService from '@services/SlackService';
 
-export const createTelegramMessage = (product: PhilatelyProduct): string => {
-    const title = `<a href="${product.href}"><b>${TelegramService.encodeHtml(product.title)}</b></a>`;
-    const type = `<i>${product.type}</i>`;
-    const year = product.year && `<b>${product.year}</b>`;
-    const dateOfIssue = product?.dateOfIssue && `<b>Date:</b> ${product.dateOfIssue}`;
-    const catalogNumber = product?.catalogNumber && `<b>No.</b> ${product.catalogNumber}`;
-    const price = product.price && `<b>Price:</b> ${product.price.value} ${product.price.currency}`;
-    const meta = product?.meta?.length && `<i>${TelegramService.encodeHtml(product.meta.join('\n'))}</i>`;
-    const description = product?.description?.length &&
-      `<b>Description:</b>\n${TelegramService.encodeHtml(product.description.join('\n'))}`;
+export const createSlackMessage = (product: PhilatelyProduct) => {
+  const title = SlackService.encodeHtml(product.title);
+  const type = product.type;
+  const year = product.year && `<b>${product.year}</b>`;
+  const dateOfIssue = product?.dateOfIssue && `*Date:* ${product.dateOfIssue}`;
+  const catalogNumber = product?.catalogNumber && `*No.* ${product.catalogNumber}`;
+  const price = product.price && `*Price:* ${product.price.value} ${product.price.currency}`;
+  const meta = product?.meta?.length && `_${SlackService.encodeHtml(product.meta.join('\n'))}_`;
+  const description = product?.description?.length &&
+    `*Description:*\n${SlackService.encodeHtml(product.description.join('\n'))}`;
 
-    return [
-        title,
-        year,
-        [dateOfIssue, type, catalogNumber].filter(Boolean).join(' '),
-        price,
-        meta,
-        description,
-    ].filter(Boolean).join('\n\n');
+  const blocks = [
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `<${product.href}|*${title}*>`,
+      },
+    },
+    {
+      type: 'image',
+      image_url: product.imgUrl,
+      alt_text: `${product.type} ${title}`,
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: year,
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: [dateOfIssue, type, catalogNumber].filter(Boolean).join(' '),
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: price,
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: meta,
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: description,
+      },
+    },
+  ];
+
+  return { blocks };
 };
