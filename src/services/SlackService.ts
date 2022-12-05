@@ -33,8 +33,7 @@ const SlackService = {
   encodeHtml: (text: string): string => text
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;'),
+    .replace(/&/g, '&amp;'),
 };
 
 export default SlackService;
