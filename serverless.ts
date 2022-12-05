@@ -215,8 +215,8 @@ const serverlessConfiguration: AWS = {
     dotenv: {
       required: {
         env: [
-          'SLACK_TOKEN',
           'SLACK_CHANNEL',
+          'SLACK_TOKEN',
           'TELEGRAM_BOT_TOKEN',
           'TELEGRAM_DEFAULT_CHAT_ID',
         ],
