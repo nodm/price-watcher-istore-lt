@@ -4,7 +4,7 @@ import SlackService from '@services/SlackService';
 export const createSlackMessage = (product: PhilatelyProduct) => {
   const title = SlackService.encodeHtml(product.title);
   const type = product.type;
-  const year = product.year && `<b>${product.year}</b>`;
+  const year = product.year && `*${product.year}*`;
   const dateOfIssue = product?.dateOfIssue && `*Date:* ${product.dateOfIssue}`;
   const catalogNumber = product?.catalogNumber && `*No.* ${product.catalogNumber}`;
   const price = product.price && `*Price:* ${product.price.value} ${product.price.currency}`;
@@ -60,7 +60,7 @@ export const createSlackMessage = (product: PhilatelyProduct) => {
         text: description,
       },
     },
-  ];
+  ].filter((block) => block.type !== 'section' || block?.text?.text);
 
   return { blocks };
 };
