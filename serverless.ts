@@ -32,7 +32,7 @@ const serverlessConfiguration: AWS = {
       TELEGRAM_BOT_TOKEN_SSM: '/${self:service}/${self:provider.stage}/telegram-bot-token',
       TELEGRAM_DEFAULT_CHAT_ID_SSM: '/${self:service}/${self:provider.stage}/telegram-default-chat-id',
       SLACK_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-token',
-      SLACK_CHANNEL_SSM: '/${self:service}/${self:provider.stage}/slack-channel',
+      SLACK_CHANNEL_POST_LT_UPDATES_SSM: '/${self:service}/${self:provider.stage}/slack-channel-post-lt',
       ISTORE_LT_PAGES_SSM: '/${self:service}/${self:provider.stage}/i-store-lt-pages',
       TELEGRAM_INCOMING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramIncomingMessageQueue.Properties.QueueName}',
       TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramOutgoingMessageQueue.Properties.QueueName}',
@@ -215,7 +215,7 @@ const serverlessConfiguration: AWS = {
     dotenv: {
       required: {
         env: [
-          'SLACK_CHANNEL',
+          'SLACK_CHANNEL_POST_LT_UPDATES',
           'SLACK_TOKEN',
           'TELEGRAM_BOT_TOKEN',
           'TELEGRAM_DEFAULT_CHAT_ID',
@@ -225,7 +225,7 @@ const serverlessConfiguration: AWS = {
         'AWS_NODEJS_CONNECTION_REUSE_ENABLED',
         'NODE_OPTIONS',
         'SLACK_TOKEN_SSM',
-        'SLACK_CHANNEL_SSM',
+        'SLACK_CHANNEL_POST_LT_UPDATES_SSM',
         'TELEGRAM_BOT_TOKEN_SSM',
         'TELEGRAM_DEFAULT_CHAT_ID_SSM',
         'ISTORE_LT_PAGES_SSM',
@@ -258,9 +258,9 @@ const serverlessConfiguration: AWS = {
           secure: true,
         },
         {
-          path: '${self:provider.environment.SLACK_CHANNEL_SSM}',
+          path: '${self:provider.environment.SLACK_CHANNEL_POST_LT_UPDATES_SSM}',
           type: 'SecureString',
-          value: '${env:SLACK_CHANNEL}',
+          value: '${env:SLACK_CHANNEL_POST_LT_UPDATES}',
           secure: true,
         },
         {

@@ -3,16 +3,11 @@ import HttpsService from '@services/HttpsService';
 import SSMParameterService from '@services/SSMParameterService';
 
 const SlackService = {
-  send: async (message) => {
+  send: async ({ channel, message }) => {
     const slackTokenSsm = getEnvVariable(EnvVariable.SLACK_TOKEN_SSM);
     console.log('Request paths from SSM:', slackTokenSsm);
     const slackToken = await SSMParameterService.getParameter(slackTokenSsm) as string;
     console.log('Slack token received');
-
-    const slackChannelSsm = getEnvVariable(EnvVariable.SLACK_CHANNEL_SSM);
-    console.log('Request paths from SSM:', slackChannelSsm);
-    const channel = await SSMParameterService.getParameter(slackChannelSsm) as string;
-    console.log('Slack chanel received');
 
     return HttpsService.post(
       {
