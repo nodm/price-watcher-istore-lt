@@ -6,6 +6,7 @@ import PostLtPhilatelyService from '@services/PostLtPhilatelyService';
 import PhilatelyProductsService from '@services/PhilatelyProductsService';
 import SQSService from '@services/SQSService';
 import { createSlackMessage } from './helpers';
+import SSMParameterService from '@services/SSMParameterService';
 
 const postLtPhilatelyWatcher: ScheduledHandler = async (): Promise<void> => {
   console.log('Started...');
@@ -64,12 +65,16 @@ const postLtPhilatelyWatcher: ScheduledHandler = async (): Promise<void> => {
   const queueUrl = getEnvVariable(EnvVariable.SLACK_OUTGOING_MESSAGE_QUEUE_URL);
   const sendMessage = SQSService.send(queueUrl);
 
-  const results = await Promise.allSettled(newProducts.map(async (product: PhilatelyProduct) => {
+  const slackChannelSsm = getEnvVariable(EnvVariable.SLACK_CHANNEL_POST_LT_UPDATES_SSM);
+  console.log('Request paths from SSM:', slackChannelSsm);
+  const channel = await SSMParameterService.getParameter(slackChannelSsm) as string;
+  console.log('Slack chanel received');
 
+  const results = await Promise.allSettled(newProducts.map(async (product: PhilatelyProduct) => {
     const message = createSlackMessage(product);
     console.log('Slack message text', message);
 
-    return sendMessage(message)
+    return sendMessage({ channel, message });
   }));
 
   results
