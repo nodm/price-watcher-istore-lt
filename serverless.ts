@@ -32,6 +32,7 @@ const serverlessConfiguration: AWS = {
       TELEGRAM_BOT_TOKEN_SSM: '/${self:service}/${self:provider.stage}/telegram-bot-token',
       TELEGRAM_DEFAULT_CHAT_ID_SSM: '/${self:service}/${self:provider.stage}/telegram-default-chat-id',
       SLACK_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-token',
+      SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM: '/${self:service}/${self:provider.stage}/slack-channel-i-store-lt',
       SLACK_CHANNEL_POST_LT_UPDATES_SSM: '/${self:service}/${self:provider.stage}/slack-channel-post-lt',
       ISTORE_LT_PAGES_SSM: '/${self:service}/${self:provider.stage}/i-store-lt-pages',
       TELEGRAM_INCOMING_MESSAGE_QUEUE_URL: 'https://sqs.${self:provider.region}.amazonaws.com/${aws:accountId}/${self:resources.Resources.TelegramIncomingMessageQueue.Properties.QueueName}',
@@ -215,6 +216,7 @@ const serverlessConfiguration: AWS = {
     dotenv: {
       required: {
         env: [
+          'SLACK_CHANNEL_I_STORE_LT_UPDATES',
           'SLACK_CHANNEL_POST_LT_UPDATES',
           'SLACK_TOKEN',
           'TELEGRAM_BOT_TOKEN',
@@ -225,6 +227,7 @@ const serverlessConfiguration: AWS = {
         'AWS_NODEJS_CONNECTION_REUSE_ENABLED',
         'NODE_OPTIONS',
         'SLACK_TOKEN_SSM',
+        'SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM',
         'SLACK_CHANNEL_POST_LT_UPDATES_SSM',
         'TELEGRAM_BOT_TOKEN_SSM',
         'TELEGRAM_DEFAULT_CHAT_ID_SSM',
@@ -258,6 +261,12 @@ const serverlessConfiguration: AWS = {
           secure: true,
         },
         {
+          path: '${self:provider.environment.SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM}',
+          type: 'SecureString',
+          value: '${env:SLACK_CHANNEL_I_STORE_LT_UPDATES}',
+          secure: true,
+        },
+        {
           path: '${self:provider.environment.SLACK_CHANNEL_POST_LT_UPDATES_SSM}',
           type: 'SecureString',
           value: '${env:SLACK_CHANNEL_POST_LT_UPDATES}',
@@ -269,7 +278,6 @@ const serverlessConfiguration: AWS = {
           value: [
             '/apple-mac-kompiuteriai/macbook-pro/shopby/14/32_gb/?limit=all',
             '/apple-ipad-plansetes/ipad-air-2022/shopby/64gb/tik_wi_fi/',
-            '/apple-watch/apple-watch-series-8/shopby/45mm/gps_cellular_esim/aliuminio_lydinio/',
           ].join(),
           description: '${self:service}: Paths to the pages of iStore.lt to be crawled',
         },

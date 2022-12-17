@@ -6,7 +6,7 @@ import IStoreLtPricesService from '@services/IStoreLtPricesService';
 import ProductService from '@services/ProductService';
 import SQSService from '@services/SQSService';
 import SSMParameterService from '@services/SSMParameterService';
-import { createTelegramMessage } from './helpers';
+import { createSlackMessage } from './helpers';
 
 const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
   console.log('Started...');
@@ -18,13 +18,12 @@ const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
 
   if (!paths || !paths.length) return;
 
-  const chatIdSsm = getEnvVariable(EnvVariable.TELEGRAM_DEFAULT_CHAT_ID_SSM);
-  console.log('Request paths from SSM:', chatIdSsm);
-  const chatIdString = await SSMParameterService.getParameter(chatIdSsm) as string;
-  console.log('Paths:', chatIdString);
-  const chatId = parseInt(chatIdString);
+  const slackChannelSsm = getEnvVariable(EnvVariable.SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM);
+  console.log('Request channel from SSM:', slackChannelSsm);
+  const channel = await SSMParameterService.getParameter(slackChannelSsm) as string;
+  console.log('Paths:', channel);
 
-  const queueUrl = getEnvVariable(EnvVariable.TELEGRAM_OUTGOING_MESSAGE_QUEUE_URL);
+  const queueUrl = getEnvVariable(EnvVariable.SLACK_OUTGOING_MESSAGE_QUEUE_URL);
   const sendMessage = SQSService.send(queueUrl);
 
   const results = await Promise.allSettled(paths.map(async (url: string) => {
@@ -43,10 +42,10 @@ const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
     }, [] as ProductItem[]);
     console.log('Product Items:', productItems);
 
-    const text = createTelegramMessage(productItems);
-    console.log('Telegram message text', text);
+    const blocks = createSlackMessage(productItems);
+    console.log('Slack message', blocks);
 
-    return sendMessage({ chatId,  text, parseMode: 'HTML' })
+    return sendMessage({ channel, message: { blocks } });
   }));
 
   results
