@@ -27,36 +27,19 @@ export const createSlackMessage = (products: ProductItem[]) => products.map(({
   specialPrice,
   url,
 }) => {
+  const priceDelta = Math.round(currentPrice - previousPrice);
+  const priceChange = priceDelta
+    ? ` (${priceDelta > 0 ? '⬆️' : '⬇️'} *_${splitNumber(Math.abs(priceDelta))}_*)`
+    : '';
+  const price = `*€ ${splitNumber(Math.round(currentPrice))}*${specialPrice ? '👍' : ''}`;
   const blocks = [
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `<${url}|*${SlackService.encodeHtml(name)}*>`,
-      },
-    },
-    {
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: `*${splitNumber(Math.round(currentPrice))}*${specialPrice ? '👍' : ''}`,
+        text: `<${url}|*${SlackService.encodeHtml(name)}*> - ${price}${priceChange}`,
       },
     },
   ];
-
-  const priceDelta = Math.round(currentPrice - previousPrice);
-  const priceChange = priceDelta
-    ? ` (${priceDelta > 0 ? '⬆️' : '⬇️'} *_${splitNumber(Math.abs(priceDelta))})_*`
-    : '';
-  if (priceChange) {
-    blocks.push({
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: priceChange,
-      },
-    });
-  }
-
   return { blocks };
 });
