@@ -42,10 +42,10 @@ const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
     }, [] as ProductItem[]);
     console.log('Product Items:', productItems);
 
-    const blocks = createSlackMessage(productItems);
-    console.log('Slack message', blocks);
-
-    return sendMessage({ channel, message: { blocks } });
+    const messages = createSlackMessage(productItems);
+    console.log('Slack messages', messages);
+    
+    return Promise.all(messages.map(message => sendMessage({ channel, message })));
   }));
 
   results

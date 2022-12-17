@@ -19,34 +19,44 @@ export const createTelegramMessage = (products: ProductItem[]): string =>  produ
   })
   .join('\n\n');
 
-export const createSlackMessage = (products: ProductItem[]) =>  products
-  .reduce((blocks, { name, currentPrice, previousPrice, specialPrice, url }: ProductItem) => {
-    const priceDelta = Math.round(currentPrice - previousPrice);
-    const priceChange = priceDelta
-      ? ` (${priceDelta > 0 ? '⬆️' : '⬇️'} *_${splitNumber(Math.abs(priceDelta))})_*`
-      : '';
-    const block = [
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `<${url}|*${SlackService.encodeHtml(name)}*>`,
-        },
+
+export const createSlackMessage = (products: ProductItem[]) => products.map(({
+  name,
+  currentPrice,
+  previousPrice,
+  specialPrice,
+  url,
+}) => {
+  const blocks = [
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `<${url}|*${SlackService.encodeHtml(name)}*>`,
       },
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `*${splitNumber(Math.round(currentPrice))}*${specialPrice ? '👍' : ''}`,
-        },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*${splitNumber(Math.round(currentPrice))}*${specialPrice ? '👍' : ''}`,
       },
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: priceChange,
-        },
+    },
+  ];
+
+  const priceDelta = Math.round(currentPrice - previousPrice);
+  const priceChange = priceDelta
+    ? ` (${priceDelta > 0 ? '⬆️' : '⬇️'} *_${splitNumber(Math.abs(priceDelta))})_*`
+    : '';
+  if (priceChange) {
+    blocks.push({
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: priceChange,
       },
-    ];
-    return [...blocks, ...block];
-  }, []);
+    });
+  }
+
+  return { blocks };
+});
