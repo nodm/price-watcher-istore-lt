@@ -32,14 +32,11 @@ export const createSlackMessage = (products: ProductItem[]) => products.map(({
     ? ` (${priceDelta > 0 ? '⬆️' : '⬇️'} *_${splitNumber(Math.abs(priceDelta))}_*)`
     : '';
   const price = `*€ ${splitNumber(Math.round(currentPrice))}*${specialPrice ? '👍' : ''}`;
-  const blocks = [
-    {
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: `<${url}|*${SlackService.encodeHtml(name)}*> - ${price}${priceChange}`,
-      },
+  return {
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      text: `<${url}|*${SlackService.encodeHtml(name)}*> - ${price}${priceChange}`,
     },
-  ];
-  return { blocks };
+  };
 });
