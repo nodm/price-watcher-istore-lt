@@ -6,7 +6,7 @@ export default {
   timeout: 15,
   events: [
     {
-      schedule: 'cron(30 6 ? * MON-SAT *)',
+      schedule: 'cron(30 9 ? * MON-SAT *)',
     },
   ],
 };
