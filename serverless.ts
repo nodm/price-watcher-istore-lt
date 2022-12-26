@@ -31,7 +31,7 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       TELEGRAM_BOT_TOKEN_SSM: '/${self:service}/${self:provider.stage}/telegram-bot-token',
       TELEGRAM_DEFAULT_CHAT_ID_SSM: '/${self:service}/${self:provider.stage}/telegram-default-chat-id',
-      SLACK_SLACK_IWATCHER_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-iwatcher-token',
+      SLACK_IWATCHER_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-iwatcher-token',
       SLACK_PHILATELY_LITHUANIA_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-philately-lithuania-token',
       SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM: '/${self:service}/${self:provider.stage}/slack-channel-i-store-lt',
       SLACK_CHANNEL_POST_LT_UPDATES_SSM: '/${self:service}/${self:provider.stage}/slack-channel-post-lt',
