@@ -23,7 +23,7 @@ const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
   const channel = await SSMParameterService.getParameter(slackChannelSsm) as string;
   console.log('Slack chanel received', channel);
 
-  const slackTokenSsm = getEnvVariable(EnvVariable.SLACK_SLACK_IWATCHER_TOKEN_SSM);
+  const slackTokenSsm = getEnvVariable(EnvVariable.SLACK_IWATCHER_TOKEN_SSM);
   console.log('Request token from SSM:', slackTokenSsm);
   const token = await SSMParameterService.getParameter(slackTokenSsm) as string;
   console.log('Slack token received');
