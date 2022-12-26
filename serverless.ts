@@ -219,7 +219,7 @@ const serverlessConfiguration: AWS = {
         env: [
           'SLACK_CHANNEL_I_STORE_LT_UPDATES',
           'SLACK_CHANNEL_POST_LT_UPDATES',
-          'SLACK_SLACK_IWATCHER_TOKEN',
+          'SLACK_IWATCHER_TOKEN',
           'SLACK_PHILATELY_LITHUANIA_TOKEN',
           'TELEGRAM_BOT_TOKEN',
           'TELEGRAM_DEFAULT_CHAT_ID',
@@ -228,7 +228,7 @@ const serverlessConfiguration: AWS = {
       include: [
         'AWS_NODEJS_CONNECTION_REUSE_ENABLED',
         'NODE_OPTIONS',
-        'SLACK_SLACK_IWATCHER_TOKEN_SSM',
+        'SLACK_IWATCHER_TOKEN_SSM',
         'SLACK_PHILATELY_LITHUANIA_TOKEN_SSM',
         'SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM',
         'SLACK_CHANNEL_POST_LT_UPDATES_SSM',
