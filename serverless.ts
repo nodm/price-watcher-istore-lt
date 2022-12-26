@@ -31,7 +31,8 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       TELEGRAM_BOT_TOKEN_SSM: '/${self:service}/${self:provider.stage}/telegram-bot-token',
       TELEGRAM_DEFAULT_CHAT_ID_SSM: '/${self:service}/${self:provider.stage}/telegram-default-chat-id',
-      SLACK_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-token',
+      SLACK_SLACK_IWATCHER_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-iwatcher-token',
+      SLACK_PHILATELY_LITHUANIA_TOKEN_SSM: '/${self:service}/${self:provider.stage}/slack-philately-lithuania-token',
       SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM: '/${self:service}/${self:provider.stage}/slack-channel-i-store-lt',
       SLACK_CHANNEL_POST_LT_UPDATES_SSM: '/${self:service}/${self:provider.stage}/slack-channel-post-lt',
       ISTORE_LT_PAGES_SSM: '/${self:service}/${self:provider.stage}/i-store-lt-pages',
@@ -218,7 +219,8 @@ const serverlessConfiguration: AWS = {
         env: [
           'SLACK_CHANNEL_I_STORE_LT_UPDATES',
           'SLACK_CHANNEL_POST_LT_UPDATES',
-          'SLACK_TOKEN',
+          'SLACK_SLACK_IWATCHER_TOKEN',
+          'SLACK_PHILATELY_LITHUANIA_TOKEN',
           'TELEGRAM_BOT_TOKEN',
           'TELEGRAM_DEFAULT_CHAT_ID',
         ],
@@ -226,7 +228,8 @@ const serverlessConfiguration: AWS = {
       include: [
         'AWS_NODEJS_CONNECTION_REUSE_ENABLED',
         'NODE_OPTIONS',
-        'SLACK_TOKEN_SSM',
+        'SLACK_SLACK_IWATCHER_TOKEN_SSM',
+        'SLACK_PHILATELY_LITHUANIA_TOKEN_SSM',
         'SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM',
         'SLACK_CHANNEL_POST_LT_UPDATES_SSM',
         'TELEGRAM_BOT_TOKEN_SSM',
@@ -255,9 +258,15 @@ const serverlessConfiguration: AWS = {
           secure: true,
         },
         {
-          path: '${self:provider.environment.SLACK_TOKEN_SSM}',
+          path: '${self:provider.environment.SLACK_SLACK_IWATCHER_TOKEN_SSM}',
           type: 'SecureString',
-          value: '${env:SLACK_TOKEN}',
+          value: '${env:SLACK_SLACK_IWATCHER_TOKEN}',
+          secure: true,
+        },
+        {
+          path: '${self:provider.environment.SLACK_PHILATELY_LITHUANIA_TOKEN_SSM}',
+          type: 'SecureString',
+          value: '${env:SLACK_PHILATELY_LITHUANIA_TOKEN}',
           secure: true,
         },
         {

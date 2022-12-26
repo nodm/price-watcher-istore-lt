@@ -66,15 +66,20 @@ const postLtPhilatelyWatcher: ScheduledHandler = async (): Promise<void> => {
   const sendMessage = SQSService.send(queueUrl);
 
   const slackChannelSsm = getEnvVariable(EnvVariable.SLACK_CHANNEL_POST_LT_UPDATES_SSM);
-  console.log('Request paths from SSM:', slackChannelSsm);
+  console.log('Request channel from SSM:', slackChannelSsm);
   const channel = await SSMParameterService.getParameter(slackChannelSsm) as string;
   console.log('Slack chanel received');
+
+  const slackTokenSsm = getEnvVariable(EnvVariable.SLACK_PHILATELY_LITHUANIA_TOKEN_SSM);
+  console.log('Request token from SSM:', slackTokenSsm);
+  const token = await SSMParameterService.getParameter(slackTokenSsm) as string;
+  console.log('Slack token received');
 
   const results = await Promise.allSettled(newProducts.map(async (product: PhilatelyProduct) => {
     const message = createSlackMessage(product);
     console.log('Slack message text', message);
 
-    return sendMessage({ channel, message });
+    return sendMessage({ token, channel, message });
   }));
 
   results
