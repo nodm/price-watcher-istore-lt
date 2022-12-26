@@ -21,7 +21,12 @@ const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
   const slackChannelSsm = getEnvVariable(EnvVariable.SLACK_CHANNEL_I_STORE_LT_UPDATES_SSM);
   console.log('Request channel from SSM:', slackChannelSsm);
   const channel = await SSMParameterService.getParameter(slackChannelSsm) as string;
-  console.log('Paths:', channel);
+  console.log('Slack chanel received', channel);
+
+  const slackTokenSsm = getEnvVariable(EnvVariable.SLACK_SLACK_IWATCHER_TOKEN_SSM);
+  console.log('Request token from SSM:', slackTokenSsm);
+  const token = await SSMParameterService.getParameter(slackTokenSsm) as string;
+  console.log('Slack token received');
 
   const queueUrl = getEnvVariable(EnvVariable.SLACK_OUTGOING_MESSAGE_QUEUE_URL);
   const sendMessage = SQSService.send(queueUrl);
@@ -44,8 +49,8 @@ const iStoreLtPriceWatcher: ScheduledHandler = async (): Promise<void> => {
 
     const blocks = createSlackMessage(productItems);
     console.log('Slack messages', blocks);
-    
-    return sendMessage({ channel, message: { blocks } });
+
+    return sendMessage({ token, channel, message: { blocks } });
   }));
 
   results
