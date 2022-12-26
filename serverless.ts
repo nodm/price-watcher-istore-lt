@@ -258,9 +258,9 @@ const serverlessConfiguration: AWS = {
           secure: true,
         },
         {
-          path: '${self:provider.environment.SLACK_SLACK_IWATCHER_TOKEN_SSM}',
+          path: '${self:provider.environment.SLACK_IWATCHER_TOKEN_SSM}',
           type: 'SecureString',
-          value: '${env:SLACK_SLACK_IWATCHER_TOKEN}',
+          value: '${env:SLACK_IWATCHER_TOKEN}',
           secure: true,
         },
         {
