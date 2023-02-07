@@ -285,10 +285,10 @@ const serverlessConfiguration: AWS = {
           path: '${self:provider.environment.ISTORE_LT_PAGES_SSM}',
           type: 'StringList',
           value: [
-            '/apple-mac-kompiuteriai/macbook-pro/shopby/14/32_gb/?limit=all',
-            '/apple-ipad-plansetes/ipad-pro-2022/shopby/128gb/11/tik_wi_fi/',
+            '/apple-mac-kompiuteriai/macbook-pro/shopby/apple_m2_pro/14/32_gb/',
+            '/apple-mac-kompiuteriai/mac-mini/shopby/apple_m2_pro/',
             '/apple-ipad-plansetes/ipad-air-2022/shopby/64gb/tik_wi_fi/',
-            '/apple-ipad-plansetes/apple-ipad-2021/shopby/10_9/tik_wi_fi/',
+            '/apple-ipad-plansetes/apple-ipad-2021/shopby/64gb/10_9/tik_wi_fi/'
           ].join(),
           description: '${self:service}: Paths to the pages of iStore.lt to be crawled',
         },
