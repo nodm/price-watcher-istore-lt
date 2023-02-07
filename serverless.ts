@@ -23,7 +23,7 @@ const serverlessConfiguration: AWS = {
     name: 'aws',
     runtime: 'nodejs16.x',
     stage: 'production',
-    region: 'us-east-1',
+    region: 'eu-north-1',
     memorySize: 128,
     timeout: 15,
     environment: {
