@@ -16,6 +16,7 @@ const serverlessConfiguration: AWS = {
     'serverless-esbuild',
     'serverless-dotenv-plugin',
     'serverless-ssm-publish',
+    'serverless-prune-plugin',
     'serverless-dynamodb-local',
     'serverless-offline',
   ],
@@ -293,6 +294,10 @@ const serverlessConfiguration: AWS = {
           description: '${self:service}: Paths to the pages of iStore.lt to be crawled',
         },
       ],
+    },
+    prune: {
+      automatic: true,
+      number: 2,
     },
     dynamodb: {
       stages: 'dev',
